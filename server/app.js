@@ -53,6 +53,17 @@ app.get('/', (req, res) => {
     });
 })
 
+app.get('/transaksi', async (req, res) => {
+    const {data, error} = await supabase
+        .from('transaksi')
+        .select()
+    res.render('transaksi', {
+        layout: 'layouts/layout',
+        title:'Transaksi',
+        datas: data,
+    });
+});
+
 app.post('/transaksi', async (req, res) => {
     const {error} = await supabase
         .from('transaksi')
