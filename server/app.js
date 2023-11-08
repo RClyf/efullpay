@@ -46,9 +46,38 @@ app.get('/home', (req, res) => {
     });
 })
 
-app.get("/api", (req, res) => {
-    res.json({ message: "Hello from server!" });
-});
+// Login
+app.get('/login', (req, res) => {
+    
+})
+
+// Home (Home Page)
+app.get('/home', (req, res) => {
+    res.render('home', {
+        layout: 'layouts/layout',
+        title:'Home',
+    });
+})
+
+// Account Management
+app.get('/account-management', (req, res) => {
+    
+})
+
+// Inventory
+app.get('/inventory', (req, res) => {
+    
+})    
+
+// Transaction
+app.get('/transaction', (req, res) => {
+    
+})
+
+// Recapitulation
+app.get('/recapitulation', (req, res) => {
+    
+})
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
