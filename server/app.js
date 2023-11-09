@@ -111,7 +111,7 @@ app.get('/inventory', async (req, res) => {
 // Transaction
 app.get('/transaction', async (req, res) => {
     const {data, error} = await supabase
-        .from('transaksi')
+        .from('barang')
         .select()
     res.render('transaction', {
         layout: 'layouts/layout',
