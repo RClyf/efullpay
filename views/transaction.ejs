@@ -41,10 +41,54 @@
         </div>
         <div class="col py-3">
             <div class="mt-4 sub-text">
-                <% datas.forEach(data => { %>
+                <h3>Shopping Cart</h3><br>  
+                <table class="table table-bordered table-striped table-hover">
+                    <thead style="background-color:#B0D8DA;">
+                        <tr>
+                            <th scope="col">No</th>
+                            <th scope="col">ID Barang</th>
+                            <th scope="col">Jenis Barang</th>
+                            <th scope="col">Jumlah</th>
+                            <th scope="col">Harga</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr style="background-color:#B0D8DA; font-weight:bolder;">
+                            <td colspan="4" >Total Harga</td>
+                            <td colspan="2" style="text-align:center">Rp 100,000</td>
+                        </tr>
+                    </tbody>                    
+                </table>
+                <span style="position: absolute; right: 0px; padding: 10px;"><button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff">Reset</button><button class="btn" type="submit" style="width:100px; margin:5px; margin-left:20px; background-color:#00304C; color:#ffffff">Checkout</button></span>
+                <!-- <% datas.forEach(data => { %>
                     <%= data.id_transaksi %><br>
                     <%= data.total %>
-                <% }) %>
+                <% }) %> -->
             </div>
         </div>
     </div>
