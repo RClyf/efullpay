@@ -96,8 +96,16 @@ app.get('/account-management', (req, res) => {
 })
 
 // Inventory
-app.get('/inventory', (req, res) => {
-    
+app.get('/inventory', async (req, res) => {
+    const {data, error} = await supabase
+        .from('barang')
+        .select()
+    res.render('inventory', {
+        layout: 'layouts/layout',
+        title:'Inventory',
+        datas: data,
+    });
+
 })    
 
 // Transaction
