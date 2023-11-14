@@ -136,8 +136,32 @@ app.post('/edit-jumlah', async (req, res) => {
 });
 
 // Recapitulation
-app.get('/recapitulation', (req, res) => {
-    
+app.get('/recapitulation', async (req, res) => {
+    try {
+        // Fetch transactions from your database (assuming you have a table named 'transaksi')
+        const { data: transactions, error } = await supabase
+            .from('transaksi')
+            .select()
+        
+        if (error) {
+            console.error(error);
+            return res.status(500).send('Internal Server Error');
+        }
+
+        // Calculate total sales
+        const totalSales = transactions.reduce((total, transaction) => total + transaction.total, 0);
+
+        // Render the recapitulation page with transaction data and total sales
+        res.render('recapitulation', {
+            layout: 'layouts/layout',
+            title: 'Recapitulation',
+            transactions: transactions,
+            totalSales: totalSales,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
 })
 
 app.listen(PORT, () => {
