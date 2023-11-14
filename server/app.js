@@ -92,7 +92,10 @@ app.get('/inventory', (req, res) => {
 
 // Transaction
 app.get('/transaction', async (req, res) => {
-    console.log(req.session.cart)
+    total = 0
+    req.session.cart.forEach(item => {
+        total += item.jumlah * item.harga;
+    })
     const {data, error} = await supabase
         .from('barang')
         .select()
@@ -101,6 +104,7 @@ app.get('/transaction', async (req, res) => {
         title:'Transaction',
         datas: data,
         cart: req.session.cart,
+        total: total,
     });
 })
 
@@ -111,6 +115,15 @@ app.post('/add-to-cart', async (req, res) => {
         harga: parseInt(req.body.harga),
         jumlah: 1
     });
+    res.redirect('/transaction');
+});
+
+app.post('/edit-jumlah', async (req, res) => {
+    req.session.cart.forEach(item => {
+        if (item.id_barang == req.body.id_barang){
+            item.jumlah = parseInt(req.body.jumlah);
+        }
+    })
     res.redirect('/transaction');
 });
 

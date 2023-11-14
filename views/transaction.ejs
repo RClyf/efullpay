@@ -79,14 +79,17 @@
                     </thead>
                     <tbody>
                         <% cart.forEach(function(item, index) { %>
-                            <% var formattedAngka = item.harga.toLocaleString('id-ID'); %>
+                            <%  var harga = item.harga * item.jumlah
+                                var formattedAngka = harga.toLocaleString('id-ID'); 
+                            %>
                             <tr>
                                 <th scope="row"><%= index + 1 %></th>
                                 <td><%= item.id_barang %></td>
                                 <td><%= item.jenis_barang %></td>
                                 <td>
                                     <form method="POST" action="/edit-jumlah">
-                                        <input id="jumlahInput" name="jumlah" value="<%= item.jumlah %>">
+                                        <input type="hidden" value="<%= item.id_barang %>" id="id_barang" name="id_barang">
+                                        <input type="number" id="jumlah" name="jumlah" value="<%= item.jumlah %>" onchange="this.form.submit()" >
                                     </form>
                                 </td>
                                 <td><%= formattedAngka %></td>
@@ -96,7 +99,7 @@
                         <% if (cart.length !== 0) { %>
                             <tr style="background-color:#B0D8DA; font-weight:bolder;">
                                 <td colspan="4" >Total Harga</td>
-                                <td colspan="2" style="text-align:center">Rp 100,000</td>
+                                <td colspan="2" style="text-align:center"><%= total.toLocaleString('id-ID') %></td>
                             </tr>
                         <% } %>
                         
@@ -144,13 +147,4 @@
     }
 });
 
-var jumlahInput = document.getElementById('jumlahInput');
-
-jumlahInput.addEventListener('input', function() {
-    var newValue = parseInt(jumlahInput.value, 10);
-
-    if (!isNaN(newValue)) {
-        jumlahInput.value = newValue;
-    }
-});
 </script>
