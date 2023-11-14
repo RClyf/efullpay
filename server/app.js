@@ -25,9 +25,6 @@ app.use(express.static('public'));
 app.use('/node_modules',express.static('node_modules'));
 app.use(express.urlencoded({ extended: true}));
 
-// Morgan untuk Logs
-app.use(morgan('combined'));
-
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
 
@@ -69,14 +66,6 @@ app.post('/transaksi', async (req, res) => {
     return;
 });
 
-// Home (Home Page)
-app.get('/home', (req, res) => {
-    res.render('home', {
-        layout: 'layouts/layout',
-        title:'Home',
-    });
-})
-
 // Login
 app.get('/login', (req, res) => {
     
@@ -84,6 +73,7 @@ app.get('/login', (req, res) => {
 
 // Home (Home Page)
 app.get('/home', (req, res) => {
+    req.session.cart = [];
     res.render('home', {
         layout: 'layouts/layout',
         title:'Home',
@@ -102,6 +92,7 @@ app.get('/inventory', (req, res) => {
 
 // Transaction
 app.get('/transaction', async (req, res) => {
+    console.log(req.session.cart)
     const {data, error} = await supabase
         .from('barang')
         .select()
@@ -109,8 +100,19 @@ app.get('/transaction', async (req, res) => {
         layout: 'layouts/layout',
         title:'Transaction',
         datas: data,
+        cart: req.session.cart,
     });
 })
+
+app.post('/add-to-cart', async (req, res) => {
+    req.session.cart.push({
+        id_barang: req.body.id_barang,
+        jenis_barang: req.body.jenis_barang,
+        harga: parseInt(req.body.harga),
+        jumlah: 1
+    });
+    res.redirect('/transaction');
+});
 
 // Recapitulation
 app.get('/recapitulation', (req, res) => {

@@ -53,10 +53,15 @@
                     </form>
                     <div id="myDropdown" class="dropdown-content">
                         <% datas.forEach(function(data, index) { %>
-                            <p class="barang">
-                                <span class="barang-name"><%= data.jenis_barang %></span>
-                                <span class="barang-stock">Stock: <%= data.stock %><button class="btn" type="submit" style="width:50px; margin-right:5px; margin-left:5px; background-color:#00304C; color:#ffffff">Add</button></span>
-                            </p>
+                            <form method="POST" action="/add-to-cart">
+                                <input type="hidden" value="<%= data.id_barang %>" id="id_barang" name="id_barang">
+                                <input type="hidden" value="<%= data.jenis_barang %>" id="jenis_barang" name="jenis_barang">
+                                <input type="hidden" value="<%= data.harga %>" id="harga" name="harga">
+                                <p class="barang">
+                                    <span class="barang-name"><%= data.jenis_barang %></span>
+                                    <span class="barang-stock">Stock: <%= data.stock %><button class="btn" type="submit" style="width:50px; margin-right:5px; margin-left:5px; background-color:#00304C; color:#ffffff">Add</button></span>
+                                </p>
+                            </form>
                         <% }) %>
                     </div>
                 </div>
@@ -73,20 +78,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% datas.forEach(function(data, index) { %>
+                        <% cart.forEach(function(item, index) { %>
+                            <% var formattedAngka = item.harga.toLocaleString('id-ID'); %>
                             <tr>
                                 <th scope="row"><%= index + 1 %></th>
-                                <td><%= data.id_barang %></td>
-                                <td><%= data.jenis_barang %></td>
-                                <td><%= data.jumlah %></td>
-                                <td><%= data.harga %></td>
+                                <td><%= item.id_barang %></td>
+                                <td><%= item.jenis_barang %></td>
+                                <td>
+                                    <form method="POST" action="/edit-jumlah">
+                                        <input id="jumlahInput" name="jumlah" value="<%= item.jumlah %>">
+                                    </form>
+                                </td>
+                                <td><%= formattedAngka %></td>
                                 <td style="width:35px;"><img src="/image/delete.png" alt="person icon" style="width: 20px; height: 20px;"></td>
                             </tr>
                         <% }) %>
-                        <tr style="background-color:#B0D8DA; font-weight:bolder;">
-                            <td colspan="4" >Total Harga</td>
-                            <td colspan="2" style="text-align:center">Rp 100,000</td>
-                        </tr>
+                        <% if (cart.length !== 0) { %>
+                            <tr style="background-color:#B0D8DA; font-weight:bolder;">
+                                <td colspan="4" >Total Harga</td>
+                                <td colspan="2" style="text-align:center">Rp 100,000</td>
+                            </tr>
+                        <% } %>
+                        
                     </tbody>                    
                 </table>
                 <span style="position: absolute; right: 0px; padding: 10px;"><button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff">Reset</button><button class="btn" type="submit" style="width:100px; margin:5px; margin-left:20px; background-color:#00304C; color:#ffffff">Checkout</button></span>
@@ -98,8 +111,6 @@
 </div>
 
 <script>
-    /* When the user clicks on the button,
-toggle between hiding and showing the dropdown content */
     function myFunction() {
         document.getElementById("myDropdown").classList.toggle("show");
     }
@@ -130,6 +141,16 @@ toggle between hiding and showing the dropdown content */
     $("#myInput").keydown(function(e){
     if (e.keyCode == 13) {
             document.getElementById("search_button").click();
+    }
+});
+
+var jumlahInput = document.getElementById('jumlahInput');
+
+jumlahInput.addEventListener('input', function() {
+    var newValue = parseInt(jumlahInput.value, 10);
+
+    if (!isNaN(newValue)) {
+        jumlahInput.value = newValue;
     }
 });
 </script>
