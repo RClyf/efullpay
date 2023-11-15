@@ -113,6 +113,7 @@ app.get('/transaction', async (req, res) => {
         datas: data,
         cart: req.session.cart,
         total: total,
+        editjumlahmsg: req.flash('edit-jumlah-msg'),
     });
 })
 
@@ -127,11 +128,27 @@ app.post('/add-to-cart', async (req, res) => {
 });
 
 app.post('/edit-jumlah', async (req, res) => {
+    checkStock = false;
+    const { data, error } = await supabase
+        .from('barang')
+        .select('id_barang, stock')
+        .eq('id_barang', req.body.id_barang);
     req.session.cart.forEach(item => {
         if (item.id_barang == req.body.id_barang){
-            item.jumlah = parseInt(req.body.jumlah);
+            if (data[0].stock >= parseInt(req.body.jumlah)){
+                checkStock = true;
+                item.jumlah = parseInt(req.body.jumlah);
+            }
         }
     })
+    if (checkStock == false){
+        req.flash('edit-jumlah-msg', 'Jumlah tidak boleh melebihi stock');
+    }
+    res.redirect('/transaction');
+});
+
+app.post('/reset-cart', async (req, res) => {
+    req.session.cart = [];
     res.redirect('/transaction');
 });
 
