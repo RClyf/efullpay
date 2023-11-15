@@ -80,3 +80,23 @@ body{
     padding-left: 20px;
     text-align: center;
 }
+
+.transaction-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    padding: 10px;
+}
+
+.transaction-btn form {
+    display: inline-block;
+}
+
+.btn {
+    width: 100px;
+    margin: 5px;
+    background-color: #00304C;
+    color: #ffffff;
+}
