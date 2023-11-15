@@ -135,10 +135,8 @@ app.post('/edit-jumlah', async (req, res) => {
     res.redirect('/transaction');
 });
 
-// Recapitulation
 app.get('/recapitulation', async (req, res) => {
     try {
-        // Fetch transactions from your database (assuming you have a table named 'transaksi')
         const { data: transactions, error } = await supabase
             .from('transaksi')
             .select()

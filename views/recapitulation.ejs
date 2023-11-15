@@ -43,7 +43,6 @@
         <div class="col py-3">
             <div class="mt-4 sub-text">
                 <h3>Recapitulation</h3>
-                <!-- Recapitulation content goes here -->
                 <table class="table table-bordered table-striped table-hover">
                     <thead style="background-color:#B0D8DA;">
                         <tr>
@@ -53,24 +52,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Replace this with your actual recapitulation data -->
-                        <tr>
-                            <td>1</td>
-                            <td>2023-11-14</td>
-                            <td>Rp 100,000</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2023-11-15</td>
-                            <td>Rp 150,000</td>
-                        </tr>
-                        <!-- You can use a loop to generate rows dynamically -->
+                        <% transactions.forEach(function(transaction, index) { %>
+                            <tr>
+                                <td><%= transaction.id_transaksi %></td>
+                                <td><%= transaction.tanggal_transaksi %></td>
+                                <td>Rp <%= transaction.total %></td>
+                            </tr>
+                        <% }) %>
                     </tbody>
                     <tfoot>
                         <tr style="background-color:#B0D8DA; font-weight:bolder;">
                             <td colspan="2">Total Sales</td>
-                            <!-- Calculate and display the total sales amount -->
-                            <td>Rp 250,000</td>
+                            <td>Rp <%= totalSales %></td>
                         </tr>
                     </tfoot>
                 </table>
