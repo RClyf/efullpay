@@ -147,6 +147,17 @@ app.post('/edit-jumlah', async (req, res) => {
     res.redirect('/transaction');
 });
 
+app.post('/remove-from-cart', async (req, res) => {
+    i = -1;
+    req.session.cart.forEach(item => {
+        i += 1;
+        if (item.id_barang == req.body.id_barang){
+            req.session.cart.splice(i,1);
+        }
+    })
+    res.redirect('/transaction');
+});
+
 app.post('/reset-cart', async (req, res) => {
     req.session.cart = [];
     res.redirect('/transaction');

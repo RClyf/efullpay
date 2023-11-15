@@ -106,7 +106,12 @@
                                 </td>
                                 <td>Rp <%= formattedAngka %></td>
                                 <td style="width:35px;">
-                                    <img src="/image/delete.png" alt="person icon" style="width: 20px; height: 20px;">
+                                    <form method="POST" action="/remove-from-cart">
+                                        <input type="hidden" value="<%= item.id_barang%>" id="id_barang" name="id_barang">
+                                        <button type="submit" style="border: none; padding: 0; background: none;">
+                                            <img src="/image/delete.png" alt="delete icon" style="width: 20px; height: 20px;">
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <% }) %>
