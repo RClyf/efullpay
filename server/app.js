@@ -93,18 +93,11 @@ app.get('/account-management',async (req, res) => {
 })
 
 app.post('/remove-from-account', async (req, res) => {
-    i = -1;
-    console.log(req.body.id_pengguna)
     const { data, error } = await supabase
       .from('account') 
       .delete()
       .eq('id_pengguna', req.body.id_pengguna);
-    // req.session.cart.forEach(account => {
-    //     i += 1;
-    //     if (account.id_pengguna == req.body.id_pengguna){
-    //         req.session.cart.splice(i,1);
-    //     }
-    // })
+
     res.redirect('/account-management');
 });
 
@@ -119,6 +112,16 @@ app.get('/inventory', async (req, res) => {
         datas: data,
     });
 })    
+
+
+app.post('/remove-from-inventory', async (req, res) => {
+    const { data, error } = await supabase
+      .from('barang') 
+      .delete()
+      .eq('id_barang', req.body.id_barang);
+
+    res.redirect('/inventory');
+});
 
 // Transaction
 app.get('/transaction', async (req, res) => {
