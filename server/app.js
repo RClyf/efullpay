@@ -93,11 +93,18 @@ app.get('/account-management',async (req, res) => {
 })
 
 app.post('/remove-from-account', async (req, res) => {
+    i = -1;
+    console.log(req.body.id_pengguna)
     const { data, error } = await supabase
       .from('account') 
       .delete()
       .eq('id_pengguna', req.body.id_pengguna);
-
+    // req.session.cart.forEach(account => {
+    //     i += 1;
+    //     if (account.id_pengguna == req.body.id_pengguna){
+    //         req.session.cart.splice(i,1);
+    //     }
+    // })
     res.redirect('/account-management');
 });
 
