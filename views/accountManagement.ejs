@@ -33,13 +33,13 @@
         <div class="col py-3">
             <div class="mt-4 sub-text">
                     <div class="d-flex justify-content-between">
-                        <h3>Inventory List</h3>
+                        <h3>Account List</h3>
                         <div class="d-flex justify-content-end gap-3">
                             <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
                             <form method="POST" action="">
                                 <div class="input-icons">
                                     <i class="fa icon"><img src="/image/search.png" alt="person icon" style="width: 20px; height: 20px;"></i>
-                                    <input type="text" placeholder="Search jenis_barang..." id="searchInput" onkeyup="filterTable()" style="width:95%; display: inline-block; text-align:center;">
+                                    <input type="text" placeholder="Search nama..." id="searchInput" onkeyup="filterTable()" style="width:95%; display: inline-block; text-align:center;">
                                 </div>
                             </form>
                         </div>
@@ -49,24 +49,26 @@
                     <thead style="background-color:#B0D8DA;">
                         <tr>
                             <th scope="col">No</th>
-                            <th scope="col">ID Barang</th>
-                            <th scope="col">Jenis Barang</th>
-                            <th scope="col">Stock</th>
-                            <th scope="col">Harga</th>
+                            <th scope="col">Nama akun</th>
+                            <th scope="col">Role</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <% datas.forEach(function(data, index) { %>
+                        <% datas.forEach(function(account, index) { %>
                             <tr>
                                 <td scope="row"><%= index + 1 %></td>
-                                <td><%= data.id_barang %></td>
-                                <td><%= data.jenis_barang %></td>
-                                <td><%= data.stock %></td>
-                                <td><%= data.harga %></td>
+                                <td><%= account.nama %></td>
+                                <td><%= account.role %></td>
                                 <td style="width:35px;">
                                     <span class="d-flex align-items-center gap-3 mx-5">
-                                      <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                                        <form method="POST" action="/remove-from-account">
+                                            <input type="hidden" value="<%= account.id_pengguna%>" id="id_pengguna" name="id_pengguna">
+                                            <span>JANGAN MENCET DELETE</span>
+                                            <button type="submit" style="border: none; padding: 0; background: none;">
+                                                <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                                            </button>
+                                        </form>
                                       <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff">Edit</button>
                                     </span>
                                 </td>
@@ -90,8 +92,10 @@
         filter = input.value.toUpperCase();
         table = document.getElementById("tableBody");
         tr = table.getElementsByTagName("tr");
+        console.log('a')
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[1]; 
+            console.log(td.textContent)
             if (td) {
                 txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
