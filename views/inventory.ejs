@@ -28,27 +28,19 @@
                     </li>
                 </ul>
                 <hr>
-                <!-- <div class="dropdown pb-4">
-                    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;">User 1</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Sign out</a></li>
-                    </ul>
-                </div> -->
             </div>
         </div>
         <div class="col py-3">
             <div class="mt-4 sub-text">
                     <div class="d-flex justify-content-between">
                         <h3>Inventory List</h3>
-                        <div class="d-flex justify-content-end gap-3">
+                        <div class="d-flex justify-content-end align-items-center gap-3 my-2">
                             <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
                             <form method="POST" action="">
-                                <div class="input-icons">
+                                <div class="input-icons p-2 rounded-pill m-0" style="background-color: #ededed;">
                                     <i class="fa icon"><img src="/image/search.png" alt="person icon" style="width: 20px; height: 20px;"></i>
-                                    <input type="text" placeholder="Search jenis_barang..." id="searchInput" onkeyup="filterTable()" style="width:95%; display: inline-block; text-align:center;">
+                                    <input type="text" placeholder="Search jenis_barang..." id="searchInput" onkeyup="filterTable()" style="width:95%; display: inline-block; text-align:center; outline: none !important; background-color: transparent;"
+                                    class="border-0">
                                 </div>
                             </form>
                         </div>
@@ -66,16 +58,22 @@
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <% datas.forEach(function(data, index) { %>
+                        <% datas.forEach(function(barang, index) { %>
                             <tr>
                                 <td scope="row"><%= index + 1 %></td>
-                                <td><%= data.id_barang %></td>
-                                <td><%= data.jenis_barang %></td>
-                                <td><%= data.stock %></td>
-                                <td><%= data.harga %></td>
+                                <td><%= barang.id_barang %></td>
+                                <td><%= barang.jenis_barang %></td>
+                                <td><%= barang.stock %></td>
+                                <td><%= barang.harga %></td>
                                 <td style="width:35px;">
                                     <span class="d-flex align-items-center gap-3 mx-5">
-                                      <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                                        <form method="POST" action="/remove-from-inventory">
+                                            <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
+                                            <span>JANGAN MENCET DELETE</span>
+                                            <button type="submit" style="border: none; padding: 0; background: none;">
+                                                <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                                            </button>
+                                        </form>
                                       <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff">Edit</button>
                                     </span>
                                 </td>
@@ -99,9 +97,8 @@
         filter = input.value.toUpperCase();
         table = document.getElementById("tableBody");
         tr = table.getElementsByTagName("tr");
-
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[2]; 
+            td = tr[i].getElementsByTagName("td")[1]; 
             if (td) {
                 txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {

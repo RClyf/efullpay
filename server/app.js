@@ -120,6 +120,16 @@ app.get('/inventory', async (req, res) => {
     });
 })    
 
+
+app.post('/remove-from-inventory', async (req, res) => {
+    const { data, error } = await supabase
+      .from('barang') 
+      .delete()
+      .eq('id_barang', req.body.id_barang);
+
+    res.redirect('/inventory');
+});
+
 // Transaction
 app.get('/transaction', async (req, res) => {
     total = 0
