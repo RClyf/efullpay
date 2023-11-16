@@ -81,9 +81,32 @@ app.get('/home', (req, res) => {
 })
 
 // Account Management
-app.get('/account-management', (req, res) => {
-    
+app.get('/account-management',async (req, res) => {
+    const {data, error} = await supabase
+    .from('account')
+    .select()
+    res.render('accountManagement', {
+        layout: 'layouts/layout',
+        title:'Account Management',
+        datas: data,
+    });
 })
+
+app.post('/remove-from-account', async (req, res) => {
+    i = -1;
+    console.log(req.body.id_pengguna)
+    const { data, error } = await supabase
+      .from('account') 
+      .delete()
+      .eq('id_pengguna', req.body.id_pengguna);
+    // req.session.cart.forEach(account => {
+    //     i += 1;
+    //     if (account.id_pengguna == req.body.id_pengguna){
+    //         req.session.cart.splice(i,1);
+    //     }
+    // })
+    res.redirect('/account-management');
+});
 
 // Inventory
 app.get('/inventory', async (req, res) => {
@@ -95,7 +118,6 @@ app.get('/inventory', async (req, res) => {
         title:'Inventory',
         datas: data,
     });
-
 })    
 
 // Transaction
