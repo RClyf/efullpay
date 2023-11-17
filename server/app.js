@@ -8,6 +8,7 @@ const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const flash = require('connect-flash');
 const axios = require("axios");
+const randomstring = require("randomstring");
 
 
 const PORT = process.env.PORT || 8080;
@@ -49,22 +50,6 @@ app.get('/', (req, res) => {
         title:'Index',
     });
 })
-
-app.post('/transaksi', async (req, res) => {
-    const {error} = await supabase
-        .from('transaksi')
-        .insert({
-            id_transaksi: "1A2B3c4d",
-            id_pengguna: "q321s4",
-            tanggal_transaksi: "2023-11-08",
-            total: 100000,
-            jenis_pembayaran: "cash",
-        })
-    if (error) {
-        console.log(error);
-    }
-    return;
-});
 
 // Login
 app.get('/login', (req, res) => {
@@ -132,9 +117,9 @@ app.post('/remove-from-inventory', async (req, res) => {
 
 // Transaction
 app.get('/transaction', async (req, res) => {
-    total = 0
+    req.session.total = 0
     req.session.cart.forEach(item => {
-        total += item.jumlah * item.harga;
+        req.session.total += item.jumlah * item.harga;
     })
     const {data, error} = await supabase
         .from('barang')
@@ -144,7 +129,7 @@ app.get('/transaction', async (req, res) => {
         title:'Transaction',
         datas: data,
         cart: req.session.cart,
-        total: total,
+        total: req.session.total,
         editjumlahmsg: req.flash('edit-jumlah-msg'),
     });
 })
@@ -191,6 +176,53 @@ app.post('/remove-from-cart', async (req, res) => {
 });
 
 app.post('/reset-cart', async (req, res) => {
+    req.session.cart = [];
+    res.redirect('/transaction');
+});
+
+app.post('/pay', async (req, res) => {
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let year = date_ob.getFullYear();
+
+    timestamp = `${Date.now()}`;
+    random = randomstring.generate(5);
+
+    id_transaksi = `${timestamp}${random}`;
+
+    async function insertToTransaksi(item) {
+        const { error } = await supabase
+            .from('transaction_detail')
+            .insert({
+                id_transaksi: `${id_transaksi}`,
+                id_barang: item.id_barang,
+                jumlah: item.jumlah,
+            });
+    
+        if (error) {
+            console.log(error);
+        }
+    }
+
+    const cartItems = req.session.cart;
+    
+    for (const item of cartItems) {
+        await insertToTransaksi(item);
+    }
+    
+    const {error} = await supabase
+        .from('transaksi')
+        .insert({
+            id_transaksi: `${id_transaksi}`,
+            id_pengguna: "q321s4",
+            tanggal_transaksi: `${year}-${month}-${date}`,
+            total: req.session.total,
+            jenis_pembayaran: req.body.jenisPembayaran,
+        })
+    if (error) {
+        console.log(error);
+    }
     req.session.cart = [];
     res.redirect('/transaction');
 });

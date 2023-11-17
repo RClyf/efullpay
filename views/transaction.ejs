@@ -85,7 +85,7 @@
                             <th scope="col">ID Barang</th>
                             <th scope="col">Jenis Barang</th>
                             <th scope="col">Jumlah</th>
-                            <th scope="col">Harga</th>
+                            <th scope="col">Subtotal</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -128,15 +128,78 @@
                     <form method="POST" action="/reset-cart">
                         <button class="btn" type="submit">Reset</button>
                     </form>
-                    <form method="POST" action="">
-                        <button class="btn" type="submit">Checkout</button>
-                    </form>
+                    <button class="btn" onclick="openPopup()">Checkout</button>
                 </div>
             </div>
         </div>
     </div>
   </div>
 </div>
+
+
+<div class="overlay" id="overlay">
+    
+</div>
+
+<div class="popup-container" id="popup">
+    <h2 style="background-color:#B0D8DA; padding:10px;">Transaciton Detail</h2>
+    <table class="table table-bordered table-striped table-hover" style="padding:20px;">
+        <tbody>
+            <% if (cart.length !== 0) { %>
+                <tr style="background-color:#B0D8DA; font-weight:bolder;">
+                    <td  >Total Harga</td>
+                    <td style="text-align:center">Rp <%= total.toLocaleString('id-ID') %></td>
+                </tr>
+                <tr style="font-weight:bolder;">
+                    <form method="POST" action="/pay">
+                    <td>Jenis Pembayaran:</td>
+                    <td style="text-align:center">
+                        <select id="jenisPembayaran" name="jenisPembayaran" style="background-color:#B0D8DA;width:250px; border:none; text-align:center">
+                            <option selected hidden>Choose</option>
+                            <option value="cash">Cash</option>
+                            <option value="debit">Debit</option>
+                            <option value="credit">Credit</option>
+                        </select>
+                    </td>
+                    
+                </tr>
+            <% } %>
+        </tbody>                    
+    </table>
+    <div class="transaction-btn">
+
+        <button class="btn" type="submit">Pay</button>
+    </form>    
+    
+    <button class="btn" onclick="closePopup()">Cancel</button>
+</div>
+    
+
+</div>
+
+<script>
+    function openPopup() {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+    }
+</script>
+
+<script>
+    function openPopup() {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+    }
+</script>
 
 <script>
     function myFunction() {
