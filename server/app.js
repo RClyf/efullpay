@@ -71,6 +71,16 @@ app.get('/login', (req, res) => {
     
 })
 
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (username === 'admin' && password === '123') {
+        res.redirect('/home');
+    } else {
+        res.render('index', { error: 'Invalid username or password' });
+    }
+});
+
 // Home (Home Page)
 app.get('/home', (req, res) => {
     req.session.cart = [];

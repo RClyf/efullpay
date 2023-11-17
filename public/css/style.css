@@ -1,6 +1,53 @@
 body{
-    color:#313133;
+    /* Existing body styles */
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
+
+/* Existing body styles here */
+
+/* New styles for login container */
+.login-container {
+  background-color: #B0D8DA;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: white;
+  width: 300px;
+  margin: 0 auto;
+}
+
+/* New styles for input fields */
+.input-field {
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+/* New styles for submit button */
+.submit-btn {
+  background-color: #313133;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #000000;
+}
+
 
 .dropdown {
     position: relative;
