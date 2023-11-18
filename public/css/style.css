@@ -4,8 +4,7 @@ body{
 
 .dropdown {
     position: relative;
-    left: 0%;
-    width: 95%;
+    left: 30%;
     padding: 10px;
 }
 
@@ -13,9 +12,9 @@ body{
 .dropdown-content {
     display: none;
     color: #000000;
+    width: 500px;
     position: absolute;
     background-color: #C0C0C0;
-    min-width: 95%;
     overflow: auto;
     border: 1px solid #ddd;
     z-index: 1;
@@ -24,9 +23,9 @@ body{
 .sub-dropdown-content {
     display: none;
     color: #000000;
+    width: 500px;
     position: absolute;
     background-color: #ffffff;
-    min-width: 95%;
     overflow: auto;
     border: 1px solid #25707c;
     z-index: 1;
