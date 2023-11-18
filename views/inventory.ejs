@@ -1,3 +1,7 @@
+<script>
+    var datas = <%- JSON.stringify(datas) %>;
+</script>
+
 <div class="container-fluid">
     <div class="row flex-nowrap">
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
@@ -78,7 +82,8 @@
                                         </form>
                                         <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
                                     </div>  
-                                      <button class="btn" type="submit" onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
+                                      <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff" 
+                                      onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
                                     </span>
                                 </td>
                             </tr>
@@ -288,23 +293,7 @@
     }
 
     .details-btn:hover {
-        background-color: #00506B; 
-    }
-    .btn{
-        background-color: #00304C; 
-        color: white;
-        border: none;
-        padding: 6.8px 12.8px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        width:100px; 
-        margin:5px;
-        
-    }
-    .btn:hover{
-        background-color: #00506B; 
-        color: white
+        background-color: #00506B; /* Lighter blue on hover, adjust as needed */
     }
 
 </style>
