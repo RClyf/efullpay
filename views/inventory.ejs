@@ -82,8 +82,7 @@
                                         </form>
                                         <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
                                     </div>  
-                                      <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff" 
-                                      onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
+                                      <button class="btn" type="submit" onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
                                     </span>
                                 </td>
                             </tr>
@@ -293,7 +292,23 @@
     }
 
     .details-btn:hover {
-        background-color: #00506B; /* Lighter blue on hover, adjust as needed */
+        background-color: #00506B; 
+    }
+    .btn{
+        background-color: #00304C; 
+        color: white;
+        border: none;
+        padding: 6.8px 12.8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width:100px; 
+        margin:5px;
+        
+    }
+    .btn:hover{
+        background-color: #00506B; 
+        color: white
     }
 
 </style>
