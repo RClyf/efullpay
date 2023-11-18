@@ -144,6 +144,15 @@ app.post('/remove-from-inventory', async (req, res) => {
     res.redirect('/inventory');
 });
 
+app.post('/remove-from-transaksi', async (req, res) => {
+    const { data, error } = await supabase
+      .from('transaksi') 
+      .delete()
+      .eq('id_transaksi', req.body.id_transaksi);
+
+    res.redirect('/recapitulation');
+});
+
 app.post('/edit-from-inventory', async (req, res) => {
     const { id_barang, jenis_barang, stock, harga } = req.body;
 
