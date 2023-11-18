@@ -67,7 +67,6 @@
                                     <span class="d-flex align-items-center gap-3 mx-5">
                                         <form method="POST" action="/remove-from-account">
                                             <input type="hidden" value="<%= account.id_pengguna%>" id="id_pengguna" name="id_pengguna">
-                                            <span>JANGAN MENCET DELETE</span>
                                             <button type="submit" style="border: none; padding: 0; background: none;">
                                                 <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
                                             </button>
@@ -99,7 +98,7 @@
             <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
                 <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
-            <button type="submit" style="border: none; padding: 0; background: none;" onclick="submitForm()">
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="openPopupAlert()">
                 <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
         </div>
@@ -194,6 +193,7 @@
 
     function submitForm() {
         document.getElementById('submitButton').click();
+        document.getElementById('popupAlert').style.display = 'none';
     }
 
 </script>
