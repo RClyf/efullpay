@@ -85,12 +85,41 @@ app.post('/remove-from-account', async (req, res) => {
       .from('account') 
       .delete()
       .eq('id_pengguna', req.body.id_pengguna);
-    // req.session.cart.forEach(account => {
-    //     i += 1;
-    //     if (account.id_pengguna == req.body.id_pengguna){
-    //         req.session.cart.splice(i,1);
-    //     }
-    // })
+
+    res.redirect('/account-management');
+});
+
+app.post('/edit-from-account-management', async (req, res) => {
+    const { id_pengguna,username,nama,email,password,role } = req.body;
+
+    if(id_pengguna!==''){
+        const { data, error } = await supabase
+        .from('account')
+        .update({
+            id_pengguna,
+            username,
+            password,
+            nama,
+            email,
+            role
+        })
+        .eq('id_pengguna', id_pengguna);
+    }
+    else{
+        const { data, error } = await supabase
+        .from('account')
+        .upsert([
+            {
+            id_pengguna:generateUniqueID(),
+            username,
+            password,
+            nama,
+            email,
+            role
+            },
+        ]);
+    }
+
     res.redirect('/account-management');
 });
 
