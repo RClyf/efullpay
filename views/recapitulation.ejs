@@ -1,4 +1,7 @@
-<!-- recapitulation.ejs -->
+<script>
+    var transactions = <%- JSON.stringify(transactions) %>;
+</script>
+
 <div class="container-fluid">
     <div class="row flex-nowrap">
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
@@ -14,12 +17,12 @@
                     </li>
                     <li>
                         <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration: underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
                         </a>
                     </li>
                     <li>
                         <a href="#" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C; text-decoration: underline;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
                         </a>
                     </li>
                     <li>
@@ -29,47 +32,145 @@
                     </li>
                 </ul>
                 <hr>
-                <div class="dropdown pb-4">
-                    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;">User 1</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Sign out</a></li>
-                    </ul>
-                </div>
             </div>
         </div>
-        <div class="col py-3">
-            <div class="mt-4 sub-text">
-                <h3>Recapitulation</h3>
-                <table class="table table-bordered table-striped table-hover">
-                    <thead style="background-color:#B0D8DA;">
-                        <tr>
-                            <th scope="col">Transaction ID</th>
-                            <th scope="col">Transaction Date</th>
-                            <th scope="col">Total Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% transactions.forEach(function(transaction, index) { %>
-                            <tr>
-                                <td><%= transaction.id_transaksi %></td>
-                                <td><%= transaction.tanggal_transaksi %></td>
-                                <td>Rp <%= transaction.total %></td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                    <tfoot>
-                        <tr style="background-color:#B0D8DA; font-weight:bolder;">
-                            <td colspan="2">Total Sales</td>
-                            <td>Rp <%= totalSales %></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+        
+       <!-- Main content -->
+<div class="col py-3">
+    <div class="mt-4 sub-text">
+        <h3>Recapitulation</h3>
+        <table class="table table-bordered table-striped table-hover">
+            <thead style="background-color:#B0D8DA;">
+                <tr>
+                    <th scope="col">Transaction ID</th>
+                    <th scope="col">Transaction Date</th> 
+                    <th scope="col">Jenis Pembayaran</th> 
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% transactions.forEach(function(transaction) { %>
+                <tr>
+                    <td><%= transaction.id_transaksi %></td>
+                    <td><%= transaction.tanggal_transaksi %></td> 
+                    <td><%= transaction.jenis_pembayaran %></td> 
+                    <td>Rp <%= transaction.total.toLocaleString('id-ID') %></td>
+                    <td>
+                        <!-- Detail button -->
+                        <button class="btn details-btn" onclick="openDetailsPopup('<%= transaction.id_transaksi %>')">Details</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<!-- Add any necessary JavaScript code here if needed -->
+
+<!-- Details popup overlay -->
+<div class="overlay" id="overlay" onclick="closeDetailsPopup()" style="display: none;"></div>
+
+<!-- Details popup container -->
+<div class="popup-container" id="detailsPopup" style="display: none;">
+    <!-- Content for details popup will be dynamically inserted here -->
+</div>
+
+<script>
+    // Function to open the details popup and fetch transaction details
+    function openDetailsPopup(id_transaksi) {
+        // Show the overlay
+        document.getElementById('overlay').style.display = 'block';
+    
+        // Fetch the transaction details
+        fetch(`/transaction-details/${id_transaksi}`)
+            .then(response => response.json())
+            .then(details => {
+                // Build the table with the details received
+                let tableHTML = '<h2 style="background-color:#B0D8DA; padding:10px;">Transaction Detail</h2>';
+                tableHTML += '<table class="table table-bordered table-striped table-hover" style="padding:20px;">';
+                tableHTML += '<thead style="background-color:#B0D8DA;">';
+                tableHTML += '<tr><th>ID Barang</th><th>Jenis Barang</th><th>Jumlah</th><th>Harga</th></tr>';
+                tableHTML += '</thead>';
+                tableHTML += '<tbody>';
+                details.forEach(detail => {
+                    let harga = detail.jumlah * detail.barang.harga;
+                    tableHTML += `<tr>
+                        <td>${detail.id_barang}</td>
+                        <td>${detail.barang.jenis_barang}</td>
+                        <td>${detail.jumlah}</td>
+                        <td>Rp ${harga.toLocaleString('id-ID')}</td>
+                    </tr>`;
+                });
+                if (details.length !== 0) {
+                    let totalHarga = details.reduce((total, detail) => total + detail.jumlah * detail.barang.harga, 0);
+                    tableHTML += `<tr style="background-color:#B0D8DA; font-weight:bolder;">
+                        <td colspan="3">Total Harga</td>
+                        <td>Rp ${totalHarga.toLocaleString('id-ID')}</td>
+                    </tr>`;
+                }
+                tableHTML += '</tbody>';
+                tableHTML += '</table>';
+    
+                // Insert the table into the popup's innerHTML
+                document.getElementById('detailsPopup').innerHTML = tableHTML;
+                document.getElementById('detailsPopup').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching transaction details:', error);
+            });
+    }
+    
+    
+    
+    
+
+
+
+    // Function to close the details popup
+    function closeDetailsPopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('detailsPopup').style.display = 'none';
+    }
+</script>
+
+<style>
+    /* Styles for the overlay and popup container */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .popup-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        width: 50%;
+        max-width: 600px;
+    }
+
+    .details-btn {
+        background-color: #00304C; 
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .details-btn:hover {
+        background-color: #00506B; 
+    }
+</style>
