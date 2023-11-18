@@ -9,6 +9,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const axios = require("axios");
 const randomstring = require("randomstring");
+const generateUniqueID = require('../utility/utility'); 
 
 
 const PORT = process.env.PORT || 8080;
@@ -105,7 +106,6 @@ app.get('/inventory', async (req, res) => {
     });
 })    
 
-
 app.post('/remove-from-inventory', async (req, res) => {
     const { data, error } = await supabase
       .from('barang') 
@@ -114,6 +114,39 @@ app.post('/remove-from-inventory', async (req, res) => {
 
     res.redirect('/inventory');
 });
+
+app.post('/edit-from-inventory', async (req, res) => {
+    const { id_barang, jenis_barang, stock, harga } = req.body;
+
+
+    if(id_barang!==''){
+        const { data, error } = await supabase
+        .from('barang')
+        .update({
+            jenis_barang,
+            stock,
+            harga,
+        })
+        .eq('id_barang', id_barang);
+    }
+    else{
+        const { data, error } = await supabase
+        .from('barang')
+        .upsert([
+            {
+            id_barang:generateUniqueID(),
+            jenis_barang,
+            stock,
+            harga, 
+            deskripsi:'Ini adalah deskripsi barang untuk data dummy. ',
+            image_name:'efullpay_logo.png'
+            },
+        ]);
+    }
+
+    res.redirect('/inventory');
+});
+
 
 // Transaction
 app.get('/transaction', async (req, res) => {

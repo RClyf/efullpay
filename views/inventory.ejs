@@ -35,7 +35,9 @@
                     <div class="d-flex justify-content-between">
                         <h3>Inventory List</h3>
                         <div class="d-flex justify-content-end align-items-center gap-3 my-2">
-                            <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                            <button onclick="openPopup()" style="border: none; padding: 0; background: none;">
+                                <img src="/image/plus.png" alt="person icon" style="width: 30px; height: 30px;" >
+                            </button>
                             <form method="POST" action="">
                                 <div class="input-icons p-2 rounded-pill m-0" style="background-color: #ededed;">
                                     <i class="fa icon"><img src="/image/search.png" alt="person icon" style="width: 20px; height: 20px;"></i>
@@ -74,7 +76,8 @@
                                                 <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
                                             </button>
                                         </form>
-                                      <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff">Edit</button>
+                                      <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff" 
+                                      onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
                                     </span>
                                 </td>
                             </tr>
@@ -88,6 +91,69 @@
     </div>
   </div>
 </div>
+
+
+<div class="overlay" id="overlay">
+    
+</div>
+
+<div class="popup-container" id="popup" style="display: bloc;">
+    <div style="background-color:#B0D8DA; padding:10px;" class="d-flex justify-content-between align-items-center">
+        <h2 id="popup-header">Edit Item</h2>
+        <div>
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
+                <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
+            </button>
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="submitForm()">
+                <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
+            </button>
+        </div>
+    </div>
+    <div class="p-3">
+        <form method="POST" action="/edit-from-inventory">
+            <input type="hidden" id="id_barang_edit" name="id_barang">
+            <div class="py-2">
+                <h6>Jenis Barang</h6>
+                <input type="text" name="jenis_barang" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+            </div>
+            <div class="py-2">
+                <h6>Stock</h6>
+                <input type="number" name="stock" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+            </div>
+            <div class="py-2">
+                <h6>Harga</h6>
+                <input type="number" name="harga" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+            </div>
+            <button type="submit" id="submitButton" style="display: none;">Submit</button>
+        </form>
+    </div>
+</div>
+    
+
+<script>
+    function openPopup(id_barang) {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+        const popupHeader = document.getElementById('popup-header');
+        if(id_barang !== undefined){
+            document.getElementById('id_barang_edit').value = id_barang;
+        }
+        else{
+            popupHeader.textContent = 'Add Barang';
+        }
+
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+    }
+
+    function submitForm() {
+        document.getElementById('submitButton').click();
+    }
+
+</script>
 
 <script>
 
