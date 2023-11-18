@@ -46,7 +46,7 @@
                     <th scope="col">Transaction Date</th> 
                     <th scope="col">Jenis Pembayaran</th> 
                     <th scope="col">Total Amount</th>
-                    <th scope="col">Details</th>
+                    <th scope="col"style="width: 150px;">Details</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,8 +58,20 @@
                     <td>Rp <%= transaction.total.toLocaleString('id-ID') %></td>
                     <td>
                         <!-- Detail button -->
-                        <button class="btn details-btn" onclick="openDetailsPopup('<%= transaction.id_transaksi %>')">Details</button>
+                        <div class="d-flex">
+                            <button class="btn details-btn" onclick="openDetailsPopup('<%= transaction.id_transaksi %>')">Details</button>
+                            
+                            <form method="POST" action="/remove-from-transaksi" style="margin-left: 10px;"> <!-- Adjust margin as needed -->
+                                <input type="hidden" value="<%= transaction.id_transaksi %>" id="id_transaksi" name="id_transaksi">
+                                <button type="submit" class="delete-button">
+                                    <!-- Use CSS to set the image as a background and center it -->
+                                </button>
+                            </form>
+                        </div>
+                        
+                        
                     </td>
+
                 </tr>
                 <% }) %>
             </tbody>
@@ -173,4 +185,20 @@
     .details-btn:hover {
         background-color: #00506B; 
     }
+
+
+    .delete-button {
+        border: none;
+        margin-top: 7px;
+        margin-left: 10px;
+        padding: 0;
+        background: none;
+        width: 30px;
+        height: 30px;
+        background-image: url('/image/delete.png'); 
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: contain;
+    }
+
 </style>
