@@ -67,7 +67,7 @@
                                 <td><%= barang.jenis_barang %></td>
                                 <td><%= barang.stock %></td>
                                 <td><%= barang.harga %></td>
-                                <td style="width:35px;">
+                                <td style="width:400px;">
                                     <span class="d-flex align-items-center gap-3 mx-5">
                                         <form method="POST" action="/remove-from-inventory">
                                             <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
@@ -76,8 +76,9 @@
                                                 <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
                                             </button>
                                         </form>
-                                      <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff" 
-                                      onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
+                                        <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
+                                    </div>  
+                                      <button class="btn" type="submit" onclick="openPopup('<%= barang.id_barang %>')">Edit</button>
                                     </span>
                                 </td>
                             </tr>
@@ -128,7 +129,22 @@
         </form>
     </div>
 </div>
-    
+
+<div class="popup-container" id="itemDetailsPopup" style="display: none;">
+    <div class="popup-header">
+        <button type="submit" style="border: none; padding: 0; background: none;" onclick="closeDetailsPopup()">
+            <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
+        </button>
+    </div>
+    <div class="popup-body">
+        <h4 id="popupTitle" class="popup-title"></h4>
+        <img id="popupImage" src="" alt="Item Image" class="popup-image">
+        <p id="popupDeskripsi" class="popup-description"></p>
+    </div>
+</div>
+
+
+
 
 <script>
     function openPopup(id_barang) {
@@ -182,3 +198,116 @@
     }
 });
 </script>
+<script>
+    function openDetailsPopup(id_barang) {
+        document.getElementById('overlay').style.display = 'block';
+        const item = datas.find(barang => barang.id_barang === id_barang);
+        if (item) {
+            document.getElementById('popupTitle').textContent = item.jenis_barang;
+            document.getElementById('popupDeskripsi').textContent = item.deskripsi;
+            document.getElementById('popupImage').src = '/image/' + item.image_name;
+            document.getElementById('itemDetailsPopup').style.display = 'block';
+        }
+    }
+    
+    function closeDetailsPopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('itemDetailsPopup').style.display = 'none';
+    }
+    
+    
+</script>
+
+<style>
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1000;
+    }
+
+    .popup-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        display: none;
+        width: 50%; /* Adjust as needed */
+        max-width: 600px; /* Adjust as needed */
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .popup-body {
+        margin-top: 20px;
+        text-align: center; /* Center align everything in the body */
+    }
+
+    .popup-title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .popup-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .popup-description {
+        text-align: justify;
+        margin: 0 20px; 
+    }
+
+    .details-btn {
+        background-color: #00304C; 
+        color: white;
+        border: none;
+        padding: 6.8px 12.8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width:100px; 
+        margin:5px;
+    }
+
+    .details-btn:hover {
+        background-color: #00506B; 
+    }
+    .btn{
+        background-color: #00304C; 
+        color: white;
+        border: none;
+        padding: 6.8px 12.8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width:100px; 
+        margin:5px;
+        
+    }
+    .btn:hover{
+        background-color: #00506B; 
+        color: white
+    }
+
+</style>
+
+
+
