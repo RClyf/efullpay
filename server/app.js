@@ -316,6 +316,40 @@ app.get('/recapitulation', async (req, res) => {
     }
 })
 
+
+app.get('/transaction-details/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log("Fetching details for transaction ID:", id); // Debugging line
+
+    try {
+        const { data, error } = await supabase
+            .from('transaction_detail')
+            .select(`
+                id_barang,
+                jumlah,
+                barang (
+                    jenis_barang,
+                    harga
+                )
+            `)
+            .eq('id_transaksi', id);
+
+        if (error) {
+            console.error('Error fetching transaction details:', error);
+            res.status(500).json({ message: 'Internal Server Error', error });
+        } else {
+            console.log("Transaction details data:", data); // Debugging line
+            res.json(data);
+        }
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Internal Server Error', error });
+    }
+});
+
+
+
+
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
