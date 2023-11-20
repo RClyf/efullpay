@@ -11,7 +11,22 @@ const axios = require("axios");
 const randomstring = require("randomstring");
 const generateUniqueID = require('../utility/utility'); 
 
+//file upload
+const multer = require("multer");
+const path = require('path');
+const storage = multer.diskStorage({
+    destination: (req,file,cb) => {
+        cb(null,'./public/image')
+    },
+    filename: (req,file,cb) => {
+        console.log(file)
+        const fileedit = file.originalname.replace(/ /g,"_");
+        cb(null, `${req.body.jenis_barang}_${fileedit}`) 
+    }
+})
 
+const upload = multer({storage : storage})
+//
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -153,9 +168,9 @@ app.post('/remove-from-transaksi', async (req, res) => {
     res.redirect('/recapitulation');
 });
 
-app.post('/edit-from-inventory', async (req, res) => {
+app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
     const { id_barang, jenis_barang, stock, harga } = req.body;
-
+    var fileedit = req.file.originalname.replace(/ /g,"_");
 
     if(id_barang!==''){
         const { data, error } = await supabase
@@ -177,7 +192,7 @@ app.post('/edit-from-inventory', async (req, res) => {
             stock,
             harga, 
             deskripsi:'Ini adalah deskripsi barang untuk data dummy. ',
-            image_name:'efullpay_logo.png'
+            image_name: `${req.body.jenis_barang}_${fileedit}`,
             },
         ]);
     }
