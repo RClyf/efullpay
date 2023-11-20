@@ -39,7 +39,7 @@
                     <div class="d-flex justify-content-between">
                         <h3>Inventory List</h3>
                         <div class="d-flex justify-content-end align-items-center gap-3 my-2">
-                            <button onclick="openPopup()" style="border: none; padding: 0; background: none;">
+                            <button onclick="openPopup(null)" style="border: none; padding: 0; background: none;">
                                 <img src="/image/plus.png" alt="person icon" style="width: 30px; height: 30px;" >
                             </button>
                             <form method="POST" action="">
@@ -181,8 +181,7 @@
         document.getElementById('popup').style.display = 'block';
         const popupHeader = document.getElementById('popup-header');
         const barang = JSON.parse(barangData)
-        console.log(barang.id_barang)
-        if(barang.id_barang !== undefined){
+        if(barangData !== null){
             document.getElementById('id_barang_edit').value = barang.id_barang;
             document.getElementById('jenis_barang_edit').value = barang.jenis_barang;
             document.getElementById('stock_edit').value = barang.stock;
@@ -221,13 +220,17 @@
         const jenis_barang = document.getElementById('jenis_barang_edit').value;
         const id_barang =  document.getElementById('id_barang_edit').value;
         console.log(datas.filter(item => item.id_barang === id_barang))
-
-        console.log(jenis_barang)
-        if(datas.some(item => item.jenis_barang === jenis_barang)&& datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
+    
+        console.log(jenis_barang,id_barang, id_barang==='')
+        if(id_barang==='' && datas.some(item => item.jenis_barang === jenis_barang)){
             document.getElementById('popupAlert').style.display = 'none';
             document.getElementById('popupUnique').style.display = 'block';
         }
-        else{
+        else if(datas.some(item => item.jenis_barang === jenis_barang) && datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
+            document.getElementById('popupAlert').style.display = 'none';
+            document.getElementById('popupUnique').style.display = 'block';
+        }
+        else {
             document.getElementById('submitButton').click();
             document.getElementById('popupAlert').style.display = 'none';
         }
