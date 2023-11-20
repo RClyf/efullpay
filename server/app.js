@@ -68,18 +68,31 @@ app.post('/transaksi', async (req, res) => {
 
 // Login
 app.get('/login', (req, res) => {
-    
-})
+    res.render('index', { error: null });
+});
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    if (username === 'admin' && password === '123') {
-        res.redirect('/home');
-    } else {
-        res.render('index', { error: 'Invalid username or password' });
+    try {
+        const { data, error } = await supabase
+            .from('account')
+            .select()
+            .eq('username', username)
+            .eq('password', password)
+            .single();
+
+        if (error || !data) {
+            return res.render('index', { error: 'Invalid username or password' });
+        }
+
+        res.redirect('/home'); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
     }
 });
+
 
 // Home (Home Page)
 app.get('/home', (req, res) => {
