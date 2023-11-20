@@ -160,6 +160,20 @@
     </div>
 </div>
 
+<div class="popup-container" id="popupUnique" style="display: bloc;">
+    <div style="background-color:#B0D8DA; padding:10px;" class="d-flex justify-content-between align-items-center">
+        <h2 id="popup-header">Alert Unique</h2>
+        <div>
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopupUnique()">
+                <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
+            </button>
+        </div>
+    </div>
+    <div class="p-3">
+        <h3>Tidak boleh ada jenis barang yang sama</h3>
+    </div>
+</div>
+
 
 <script>
     function openPopup(barangData) {
@@ -198,9 +212,26 @@
         document.getElementById('popupAlert').style.display = 'none';
     }
 
+    function closePopupUnique(){
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popupUnique').style.display = 'none';
+    }
+
     function submitForm() {
-        document.getElementById('submitButton').click();
-        document.getElementById('popupAlert').style.display = 'none';
+        const jenis_barang = document.getElementById('jenis_barang_edit').value;
+        const id_barang =  document.getElementById('id_barang_edit').value;
+        console.log(datas.filter(item => item.id_barang === id_barang))
+
+        console.log(jenis_barang)
+        if(datas.some(item => item.jenis_barang === jenis_barang)&& datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
+            document.getElementById('popupAlert').style.display = 'none';
+            document.getElementById('popupUnique').style.display = 'block';
+        }
+        else{
+            document.getElementById('submitButton').click();
+            document.getElementById('popupAlert').style.display = 'none';
+        }
+    
     }
 
 </script>
