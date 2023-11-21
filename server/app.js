@@ -169,9 +169,7 @@ app.post('/remove-from-transaksi', async (req, res) => {
 });
 
 app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
-    const { id_barang, jenis_barang, stock, harga } = req.body;
-    var fileedit = req.file.originalname.replace(/ /g,"_");
-
+    const { id_barang, jenis_barang, stock, harga,deskripsi } = req.body;
     if(id_barang!==''){
         const { data, error } = await supabase
         .from('barang')
@@ -183,6 +181,7 @@ app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
         .eq('id_barang', id_barang);
     }
     else{
+        var fileedit = req.file.originalname.replace(/ /g,"_");
         const { data, error } = await supabase
         .from('barang')
         .upsert([
@@ -191,7 +190,7 @@ app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
             jenis_barang,
             stock,
             harga, 
-            deskripsi:'Ini adalah deskripsi barang untuk data dummy. ',
+            deskripsi,
             image_name: `${req.body.jenis_barang}_${fileedit}`,
             },
         ]);

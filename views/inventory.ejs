@@ -108,29 +108,43 @@
             <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
                 <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
-            <button type="submit" style="border: none; padding: 0; background: none;" onclick="openPopupAlert()">
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="confirmAndSubmit()">
                 <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
         </div>
     </div>
     <div class="p-3">
-        <form method="POST" action="/edit-from-inventory" enctype="multipart/form-data">
+        <form method="POST" action="/edit-from-inventory" enctype="multipart/form-data" onsubmit="return validateAndSubmitForm()">
             <input type="hidden" id="id_barang_edit" name="id_barang">
             <div class="py-2">
                 <h6>Jenis Barang</h6>
                 <input type="text" id="jenis_barang_edit" name="jenis_barang" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+                <p id="jenisBarangError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Stock</h6>
                 <input type="number" id="stock_edit" name="stock" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="stockError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Harga</h6>
                 <input type="number" id="harga_edit" name="harga" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="hargaError" class="error"></p>
             </div>
-            <input type="file" name="image" id="image">
-            <button type="submit" id="submitButton" style="display: none;">Submit</button>
+            <div class="py-2" id="deskripsiEdit-div">
+                <h6>Deskripsi</h6>
+                <input type="text" id="deskripsi_edit" name="deskripsi" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+                <p id="deskripsiError" class="error"></p>
+            </div>
+            <div class="py-2" id="imageEdit-div">
+                <h6>Image</h6>
+                <input type="file" name="image" id="image_edit" required>
+                <p id="imageError" class="error"></p>
+            </div>
+            
+            <button type="submit" id="submitButton" style="display:none;">Submit</button>
         </form>
+        
     </div>
 </div>
 
@@ -174,6 +188,90 @@
     </div>
 </div>
 
+<script>
+    function confirmAndSubmit() {
+        if (validateForm()) {
+            // Display a confirmation dialog
+            openPopupAlert();          
+        }
+    }
+    
+    function validateForm() {
+        // Reset error messages
+        document.getElementById('jenisBarangError').textContent = '';
+        document.getElementById('stockError').textContent = '';
+        document.getElementById('hargaError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('deskripsiError').textContent = '';
+
+    
+        // Get form values
+        const id_barang =  document.getElementById('id_barang_edit').value;
+        const jenis_barang = document.getElementById('jenis_barang_edit').value;
+        var stock = document.getElementById('stock_edit').value;
+        var harga = document.getElementById('harga_edit').value;
+        var image = document.getElementById('image_edit').value;
+        var deskripsi = document.getElementById('deskripsi_edit').value;
+
+
+         // Simple validation example for jenis_barang
+        if (jenis_barang==='') {
+            document.getElementById('jenisBarangError').textContent = 'Jenis barang is required';
+        }
+        if(id_barang==='' && datas.some(item => item.jenis_barang === jenis_barang)){
+            document.getElementById('jenisBarangError').textContent = 'Jenis Barang must be unique';
+        }
+        else if(datas.some(item => item.jenis_barang === jenis_barang) && datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
+            document.getElementById('jenisBarangError').textContent = 'Jenis Barang must be unique';
+        }
+
+        // Simple validation example for stock (numeric and positive)
+        if (isNaN(stock) || stock <= 0) {
+            document.getElementById('stockError').textContent = 'Stock must be a positive number';
+        }
+    
+        // Simple validation example for harga (numeric and positive)
+        if (isNaN(harga) || harga <= 0) {
+            document.getElementById('hargaError').textContent = 'Harga must be a positive number';
+        }
+
+        if (deskripsi==='') {
+            document.getElementById('deskripsiError').textContent = 'Deskripsi is required';
+        }
+    
+        // Validate that the image input is not empty
+        if (image.trim() === '' && !id_barang) {
+            document.getElementById('imageError').textContent = 'Image is required';
+        }
+    
+        var deskripsiInput = document.getElementById('deskripsi_edit');
+        var deskripsi = deskripsiInput.value;
+
+        if (deskripsiInput.disabled) {
+            // If any validation fails, prevent form submission
+            if (document.getElementById('jenisBarangError').textContent||document.getElementById('stockError').textContent || document.getElementById('hargaError').textContent) {
+                return false;
+            }  
+        }
+        else{
+            // If any validation fails, prevent form submission
+            if (document.getElementById('deskripsiError').textContent||document.getElementById('jenisBarangError').textContent||document.getElementById('stockError').textContent || document.getElementById('hargaError').textContent || document.getElementById('imageError').textContent) {
+                return false;
+            }   
+        }
+        
+    
+        // If all validations pass
+        return true;
+    }
+
+    function submitForm() {
+        document.getElementById('submitButton').click();
+        document.getElementById('popupAlert').style.display = 'none';
+    }
+</script>
+    
+
 
 <script>
     function openPopup(barangData) {
@@ -181,13 +279,35 @@
         document.getElementById('popup').style.display = 'block';
         const popupHeader = document.getElementById('popup-header');
         const barang = JSON.parse(barangData)
+
+        document.getElementById('jenisBarangError').textContent = '';
+        document.getElementById('stockError').textContent = '';
+        document.getElementById('hargaError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('deskripsiError').textContent = '';
         if(barangData !== null){
             document.getElementById('id_barang_edit').value = barang.id_barang;
             document.getElementById('jenis_barang_edit').value = barang.jenis_barang;
             document.getElementById('stock_edit').value = barang.stock;
             document.getElementById('harga_edit').value = barang.harga;
+
+            document.getElementById('image_edit').disabled = true;
+            document.getElementById('imageEdit-div').style.display = 'none';
+
+            document.getElementById('deskripsi_edit').disabled = true;
+            document.getElementById('deskripsiEdit-div').style.display = 'none';
         }
         else{
+            document.getElementById('jenis_barang_edit').value = ''
+            document.getElementById('stock_edit').value ='';
+            document.getElementById('harga_edit').value = '';
+
+            document.getElementById('image_edit').disabled = false;
+            document.getElementById('imageEdit-div').style.display = 'block';
+
+            document.getElementById('deskripsi_edit').disabled = false;
+            document.getElementById('deskripsiEdit-div').style.display = 'block';
+
             popupHeader.textContent = 'Add Barang';
         }
 
@@ -214,27 +334,6 @@
     function closePopupUnique(){
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popupUnique').style.display = 'none';
-    }
-
-    function submitForm() {
-        const jenis_barang = document.getElementById('jenis_barang_edit').value;
-        const id_barang =  document.getElementById('id_barang_edit').value;
-        console.log(datas.filter(item => item.id_barang === id_barang))
-    
-        console.log(jenis_barang,id_barang, id_barang==='')
-        if(id_barang==='' && datas.some(item => item.jenis_barang === jenis_barang)){
-            document.getElementById('popupAlert').style.display = 'none';
-            document.getElementById('popupUnique').style.display = 'block';
-        }
-        else if(datas.some(item => item.jenis_barang === jenis_barang) && datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
-            document.getElementById('popupAlert').style.display = 'none';
-            document.getElementById('popupUnique').style.display = 'block';
-        }
-        else {
-            document.getElementById('submitButton').click();
-            document.getElementById('popupAlert').style.display = 'none';
-        }
-    
     }
 
 </script>
@@ -373,6 +472,9 @@
     .btn:hover{
         background-color: #00506B; 
         color: white
+    }
+    .error {
+        color: red;
     }
 
 </style>
