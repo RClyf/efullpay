@@ -276,6 +276,19 @@ app.post('/pay', async (req, res) => {
 
     id_transaksi = `${timestamp}${random}`;
 
+    const {error} = await supabase
+        .from('transaksi')
+        .insert({
+            id_transaksi: `${id_transaksi}`,
+            id_pengguna: "q321s4",
+            tanggal_transaksi: `${year}-${month}-${date}`,
+            total: req.session.total,
+            jenis_pembayaran: req.body.jenisPembayaran,
+        })
+    if (error) {
+        console.log(error);
+    }
+
     async function insertToTransaksi(item) {
         const { error } = await supabase
             .from('transaction_detail')
@@ -296,18 +309,31 @@ app.post('/pay', async (req, res) => {
         await insertToTransaksi(item);
     }
     
-    const {error} = await supabase
-        .from('transaksi')
-        .insert({
-            id_transaksi: `${id_transaksi}`,
-            id_pengguna: "q321s4",
-            tanggal_transaksi: `${year}-${month}-${date}`,
-            total: req.session.total,
-            jenis_pembayaran: req.body.jenisPembayaran,
-        })
-    if (error) {
-        console.log(error);
+    async function updateStock(item, barang) {
+        const newStock = parseInt(barang.stock) - parseInt(item.jumlah);
+        console.log(typeof newStock);
+        console.log(newStock)
+        console.log(barang.stock)
+        console.log(item.jumlah)
+        const { error } = await supabase
+            .from('barang')
+            .update({
+                stock: parseInt(newStock),
+            })
+            .eq('id_barang', item.id_barang)
+        if (error) {
+            console.log(error);
+        }
     }
+
+    for (const item of cartItems) {
+        const { data, error1 } = await supabase
+            .from('barang')
+            .select('id_barang, stock')
+            .eq('id_barang', item.id_barang);
+        await updateStock(item,data[0]);
+    }
+
     req.session.cart = [];
     res.redirect('/transaction');
 });
