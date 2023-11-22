@@ -180,16 +180,17 @@ body{
   }
   .input-field {
     display: block;
-    width: 100%;
+    width: 70%;
     padding: 10px;
     margin-bottom: 20px;
+    margin-left: 50px;
     border: none;
     font-size: 16px;
     text-align: start;
   }
   .submit-btn {
     display: block;
-    width: 100%;
+    width: 30%;
     padding: 10px;
     background-color: #B0D8DA;
     color: #fff;
@@ -197,6 +198,7 @@ body{
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
+    margin-left: 250px;
   }
   .submit-btn:hover {
     background-color: #00233E;
