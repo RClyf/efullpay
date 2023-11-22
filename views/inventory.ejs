@@ -1,45 +1,60 @@
+<script>
+    var datas = <%- JSON.stringify(datas) %>;
+</script>
+
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA; width:250px; position:fixed;">
             <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
                 <a href="/home" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none">
                     <span class="fs-5 d-none d-sm-inline" style="color:#00304C;"><h2><img src="/image/efullpay_logo.png" style="width:100px; height:100px; margin:0!; padding:0!;">EFullPay</h2></span>
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                     <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="/account-management" class="nav-link align-middle px-0">
                             <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration: underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
+                        <a href="/inventory" class="nav-link align-middle px-0">
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C; text-decoration:underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link px-0 align-middle">
+                        <a href="/transaction" class="nav-link px-0 align-middle">
                             <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                            </i> <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
+                        <a href="/recapitulation" class="nav-link px-0 align-middle">
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
                         </a>
                     </li>
                 </ul>
                 <hr>
+                <div class="dropdown pb-4">
+                    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/image/profile.png" alt="profile-icon" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;">User 1</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="col py-3">
+        <div class="col py-3" style="margin-left: 250px;">
             <div class="mt-4 sub-text">
                     <div class="d-flex justify-content-between">
                         <h3>Inventory List</h3>
                         <div class="d-flex justify-content-end align-items-center gap-3 my-2">
-                            <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                            <button onclick="openPopup(null)" style="border: none; padding: 0; background: none;">
+                                <img src="/image/plus.png" alt="person icon" style="width: 30px; height: 30px;" >
+                            </button>
                             <form method="POST" action="">
                                 <div class="input-icons p-2 rounded-pill m-0" style="background-color: #ededed;">
                                     <i class="fa icon"><img src="/image/search.png" alt="person icon" style="width: 20px; height: 20px;"></i>
-                                    <input type="text" placeholder="Search jenis_barang..." id="searchInput" onkeyup="filterTable()" style="width:95%; display: inline-block; text-align:center; outline: none !important; background-color: transparent;"
+                                    <input type="text" placeholder="Search jenis_barang..." id="searchInput" onkeyup="filterTable()" style="width:100%; display: inline-block; text-align:center; outline: none !important; background-color: transparent;"
                                     class="border-0">
                                 </div>
                             </form>
@@ -65,16 +80,17 @@
                                 <td><%= barang.jenis_barang %></td>
                                 <td><%= barang.stock %></td>
                                 <td><%= barang.harga %></td>
-                                <td style="width:35px;">
+                                <td style="width:400px;">
                                     <span class="d-flex align-items-center gap-3 mx-5">
                                         <form method="POST" action="/remove-from-inventory">
                                             <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
-                                            <span>JANGAN MENCET DELETE</span>
                                             <button type="submit" style="border: none; padding: 0; background: none;">
                                                 <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
                                             </button>
                                         </form>
-                                      <button class="btn" type="submit" style="width:100px; margin:5px; background-color:#00304C; color:#ffffff">Edit</button>
+                                        <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
+                                    </div>  
+                                      <button class="btn" type="submit" onclick="openPopup('<%= JSON.stringify(barang) %>')">Edit</button>
                                     </span>
                                 </td>
                             </tr>
@@ -89,6 +105,248 @@
   </div>
 </div>
 
+
+<div class="overlay" id="overlay">
+    
+</div>
+
+<div class="popup-container" id="popup" style="display: bloc;">
+    <div style="background-color:#B0D8DA; padding:10px;" class="d-flex justify-content-between align-items-center">
+        <h2 id="popup-header">Edit Item</h2>
+        <div>
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
+                <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
+            </button>
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="confirmAndSubmit()">
+                <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
+            </button>
+        </div>
+    </div>
+    <div class="p-3">
+        <form method="POST" action="/edit-from-inventory" enctype="multipart/form-data" onsubmit="return validateAndSubmitForm()">
+            <input type="hidden" id="id_barang_edit" name="id_barang">
+            <div class="py-2">
+                <h6>Jenis Barang</h6>
+                <input type="text" id="jenis_barang_edit" name="jenis_barang" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+                <p id="jenisBarangError" class="error"></p>
+            </div>
+            <div class="py-2">
+                <h6>Stock</h6>
+                <input type="number" id="stock_edit" name="stock" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="stockError" class="error"></p>
+            </div>
+            <div class="py-2">
+                <h6>Harga</h6>
+                <input type="number" id="harga_edit" name="harga" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="hargaError" class="error"></p>
+            </div>
+            <div class="py-2" id="deskripsiEdit-div">
+                <h6>Deskripsi</h6>
+                <input type="text" id="deskripsi_edit" name="deskripsi" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+                <p id="deskripsiError" class="error"></p>
+            </div>
+            <div class="py-2" id="imageEdit-div">
+                <h6>Image</h6>
+                <input type="file" name="image" id="image_edit" required>
+                <p id="imageError" class="error"></p>
+            </div>
+            
+            <button type="submit" id="submitButton" style="display:none;">Submit</button>
+        </form>
+        
+    </div>
+</div>
+
+<div class="popup-container" id="itemDetailsPopup" style="display: none;">
+    <div class="popup-header">
+        <button type="submit" style="border: none; padding: 0; background: none;" onclick="closeDetailsPopup()">
+            <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
+        </button>
+    </div>
+    <div class="popup-body">
+        <h4 id="popupTitle" class="popup-title"></h4>
+        <img id="popupImage" src="" alt="Item Image" class="popup-image">
+        <p id="popupDeskripsi" class="popup-description"></p>
+    </div>
+</div>
+
+<div class="popup-container" id="popupAlert" style="display: bloc;">
+    <div style="background-color:#B0D8DA; padding:10px;" class="d-flex justify-content-between align-items-center">
+        <h2 id="popup-header">Alert</h2>
+    </div>
+    <div class="p-3">
+        <h3 class="text-center">Apakah kamu yakin untuk melakukan perubahan ini</h3>
+        <div class="p-2 d-flex justify-content-center">
+            <button class="btn2 mx-3" type="submit" onclick="closePopupAlert()">Tidak</button>
+            <button class="btn mx-3" onclick="submitForm()">Ya</button>
+        </div>
+    </div>
+</div>
+
+<div class="popup-container" id="popupUnique" style="display: bloc;">
+    <div style="background-color:#B0D8DA; padding:10px;" class="d-flex justify-content-between align-items-center">
+        <h2 id="popup-header">Alert Unique</h2>
+        <div>
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopupUnique()">
+                <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
+            </button>
+        </div>
+    </div>
+    <div class="p-3">
+        <h3>Tidak boleh ada jenis barang yang sama</h3>
+    </div>
+</div>
+
+<script>
+    function confirmAndSubmit() {
+        if (validateForm()) {
+            // Display a confirmation dialog
+            openPopupAlert();          
+        }
+    }
+    
+    function validateForm() {
+        // Reset error messages
+        document.getElementById('jenisBarangError').textContent = '';
+        document.getElementById('stockError').textContent = '';
+        document.getElementById('hargaError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('deskripsiError').textContent = '';
+
+    
+        // Get form values
+        const id_barang =  document.getElementById('id_barang_edit').value;
+        const jenis_barang = document.getElementById('jenis_barang_edit').value;
+        var stock = document.getElementById('stock_edit').value;
+        var harga = document.getElementById('harga_edit').value;
+        var image = document.getElementById('image_edit').value;
+        var deskripsi = document.getElementById('deskripsi_edit').value;
+
+
+         // Simple validation example for jenis_barang
+        if (jenis_barang==='') {
+            document.getElementById('jenisBarangError').textContent = 'Jenis barang is required';
+        }
+        if(id_barang==='' && datas.some(item => item.jenis_barang === jenis_barang)){
+            document.getElementById('jenisBarangError').textContent = 'Jenis Barang must be unique';
+        }
+        else if(datas.some(item => item.jenis_barang === jenis_barang) && datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
+            document.getElementById('jenisBarangError').textContent = 'Jenis Barang must be unique';
+        }
+
+        // Simple validation example for stock (numeric and positive)
+        if (isNaN(stock) || stock <= 0) {
+            document.getElementById('stockError').textContent = 'Stock must be a positive number';
+        }
+    
+        // Simple validation example for harga (numeric and positive)
+        if (isNaN(harga) || harga <= 0) {
+            document.getElementById('hargaError').textContent = 'Harga must be a positive number';
+        }
+
+        if (deskripsi==='') {
+            document.getElementById('deskripsiError').textContent = 'Deskripsi is required';
+        }
+    
+        // Validate that the image input is not empty
+        if (image.trim() === '' && !id_barang) {
+            document.getElementById('imageError').textContent = 'Image is required';
+        }
+    
+        var deskripsiInput = document.getElementById('deskripsi_edit');
+        var deskripsi = deskripsiInput.value;
+
+        if (deskripsiInput.disabled) {
+            // If any validation fails, prevent form submission
+            if (document.getElementById('jenisBarangError').textContent||document.getElementById('stockError').textContent || document.getElementById('hargaError').textContent) {
+                return false;
+            }  
+        }
+        else{
+            // If any validation fails, prevent form submission
+            if (document.getElementById('deskripsiError').textContent||document.getElementById('jenisBarangError').textContent||document.getElementById('stockError').textContent || document.getElementById('hargaError').textContent || document.getElementById('imageError').textContent) {
+                return false;
+            }   
+        }
+        
+    
+        // If all validations pass
+        return true;
+    }
+
+    function submitForm() {
+        document.getElementById('submitButton').click();
+        document.getElementById('popupAlert').style.display = 'none';
+    }
+</script>
+    
+
+
+<script>
+    function openPopup(barangData) {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+        const popupHeader = document.getElementById('popup-header');
+        const barang = JSON.parse(barangData)
+
+        document.getElementById('jenisBarangError').textContent = '';
+        document.getElementById('stockError').textContent = '';
+        document.getElementById('hargaError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('deskripsiError').textContent = '';
+        if(barangData !== null){
+            document.getElementById('id_barang_edit').value = barang.id_barang;
+            document.getElementById('jenis_barang_edit').value = barang.jenis_barang;
+            document.getElementById('stock_edit').value = barang.stock;
+            document.getElementById('harga_edit').value = barang.harga;
+
+            document.getElementById('image_edit').disabled = true;
+            document.getElementById('imageEdit-div').style.display = 'none';
+
+            document.getElementById('deskripsi_edit').disabled = true;
+            document.getElementById('deskripsiEdit-div').style.display = 'none';
+        }
+        else{
+            document.getElementById('jenis_barang_edit').value = ''
+            document.getElementById('stock_edit').value ='';
+            document.getElementById('harga_edit').value = '';
+
+            document.getElementById('image_edit').disabled = false;
+            document.getElementById('imageEdit-div').style.display = 'block';
+
+            document.getElementById('deskripsi_edit').disabled = false;
+            document.getElementById('deskripsiEdit-div').style.display = 'block';
+
+            popupHeader.textContent = 'Add Barang';
+        }
+
+    }
+
+    function closePopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+    }
+
+    function openPopupAlert(){
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popupAlert').style.display = 'block';
+    }
+
+    function closePopupAlert(){
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popupAlert').style.display = 'none';
+    }
+
+    function closePopupUnique(){
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('popupUnique').style.display = 'none';
+    }
+
+</script>
+
 <script>
 
     function filterTable() {
@@ -98,7 +356,7 @@
         table = document.getElementById("tableBody");
         tr = table.getElementsByTagName("tr");
         for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1]; 
+            td = tr[i].getElementsByTagName("td")[2]; 
             if (td) {
                 txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -116,3 +374,119 @@
     }
 });
 </script>
+<script>
+    function openDetailsPopup(id_barang) {
+        document.getElementById('overlay').style.display = 'block';
+        const item = datas.find(barang => barang.id_barang === id_barang);
+        if (item) {
+            document.getElementById('popupTitle').textContent = item.jenis_barang;
+            document.getElementById('popupDeskripsi').textContent = item.deskripsi;
+            document.getElementById('popupImage').src = '/image/' + item.image_name;
+            document.getElementById('itemDetailsPopup').style.display = 'block';
+        }
+    }
+    
+    function closeDetailsPopup() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('itemDetailsPopup').style.display = 'none';
+    }
+    
+    
+</script>
+
+<style>
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1000;
+    }
+
+    .popup-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        display: none;
+        width: 50%; /* Adjust as needed */
+        max-width: 600px; /* Adjust as needed */
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .popup-body {
+        margin-top: 20px;
+        text-align: center; /* Center align everything in the body */
+    }
+
+    .popup-title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .popup-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .popup-description {
+        text-align: justify;
+        margin: 0 20px; 
+    }
+
+    .details-btn {
+        background-color: #00304C; 
+        color: white;
+        border: none;
+        padding: 6.8px 12.8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width:100px; 
+        margin:5px;
+    }
+
+    .details-btn:hover {
+        background-color: #00506B; 
+    }
+    .btn{
+        background-color: #00304C; 
+        color: white;
+        border: none;
+        padding: 6.8px 12.8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width:100px; 
+        margin:5px;
+        
+    }
+    .btn:hover{
+        background-color: #00506B; 
+        color: white
+    }
+    .error {
+        color: red;
+    }
+
+</style>
+
+
+

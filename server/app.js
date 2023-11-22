@@ -8,8 +8,25 @@ const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const flash = require('connect-flash');
 const axios = require("axios");
+const randomstring = require("randomstring");
+const generateUniqueID = require('../utility/utility'); 
 
+//file upload
+const multer = require("multer");
+const path = require('path');
+const storage = multer.diskStorage({
+    destination: (req,file,cb) => {
+        cb(null,'./public/image')
+    },
+    filename: (req,file,cb) => {
+        console.log(file)
+        const fileedit = file.originalname.replace(/ /g,"_");
+        cb(null, `${req.body.jenis_barang}_${fileedit}`) 
+    }
+})
 
+const upload = multer({storage : storage})
+//
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -49,22 +66,6 @@ app.get('/', (req, res) => {
         title:'Index',
     });
 })
-
-app.post('/transaksi', async (req, res) => {
-    const {error} = await supabase
-        .from('transaksi')
-        .insert({
-            id_transaksi: "1A2B3c4d",
-            id_pengguna: "q321s4",
-            tanggal_transaksi: "2023-11-08",
-            total: 100000,
-            jenis_pembayaran: "cash",
-        })
-    if (error) {
-        console.log(error);
-    }
-    return;
-});
 
 // Login
 app.get('/login', (req, res) => {
@@ -122,12 +123,41 @@ app.post('/remove-from-account', async (req, res) => {
       .from('account') 
       .delete()
       .eq('id_pengguna', req.body.id_pengguna);
-    // req.session.cart.forEach(account => {
-    //     i += 1;
-    //     if (account.id_pengguna == req.body.id_pengguna){
-    //         req.session.cart.splice(i,1);
-    //     }
-    // })
+
+    res.redirect('/account-management');
+});
+
+app.post('/edit-from-account-management', async (req, res) => {
+    const { id_pengguna,username,nama,email,password,role } = req.body;
+
+    if(id_pengguna!==''){
+        const { data, error } = await supabase
+        .from('account')
+        .update({
+            id_pengguna,
+            username,
+            password,
+            nama,
+            email,
+            role
+        })
+        .eq('id_pengguna', id_pengguna);
+    }
+    else{
+        const { data, error } = await supabase
+        .from('account')
+        .upsert([
+            {
+            id_pengguna:generateUniqueID(),
+            username,
+            password,
+            nama,
+            email,
+            role
+            },
+        ]);
+    }
+
     res.redirect('/account-management');
 });
 
@@ -143,7 +173,6 @@ app.get('/inventory', async (req, res) => {
     });
 })    
 
-
 app.post('/remove-from-inventory', async (req, res) => {
     const { data, error } = await supabase
       .from('barang') 
@@ -153,11 +182,52 @@ app.post('/remove-from-inventory', async (req, res) => {
     res.redirect('/inventory');
 });
 
+app.post('/remove-from-transaksi', async (req, res) => {
+    const { data, error } = await supabase
+      .from('transaksi') 
+      .delete()
+      .eq('id_transaksi', req.body.id_transaksi);
+
+    res.redirect('/recapitulation');
+});
+
+app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
+    const { id_barang, jenis_barang, stock, harga,deskripsi } = req.body;
+    if(id_barang!==''){
+        const { data, error } = await supabase
+        .from('barang')
+        .update({
+            jenis_barang,
+            stock,
+            harga,
+        })
+        .eq('id_barang', id_barang);
+    }
+    else{
+        var fileedit = req.file.originalname.replace(/ /g,"_");
+        const { data, error } = await supabase
+        .from('barang')
+        .upsert([
+            {
+            id_barang:generateUniqueID(),
+            jenis_barang,
+            stock,
+            harga, 
+            deskripsi,
+            image_name: `${req.body.jenis_barang}_${fileedit}`,
+            },
+        ]);
+    }
+
+    res.redirect('/inventory');
+});
+
+
 // Transaction
 app.get('/transaction', async (req, res) => {
-    total = 0
+    req.session.total = 0
     req.session.cart.forEach(item => {
-        total += item.jumlah * item.harga;
+        req.session.total += item.jumlah * item.harga;
     })
     const {data, error} = await supabase
         .from('barang')
@@ -167,7 +237,7 @@ app.get('/transaction', async (req, res) => {
         title:'Transaction',
         datas: data,
         cart: req.session.cart,
-        total: total,
+        total: req.session.total,
         editjumlahmsg: req.flash('edit-jumlah-msg'),
     });
 })
@@ -218,6 +288,79 @@ app.post('/reset-cart', async (req, res) => {
     res.redirect('/transaction');
 });
 
+app.post('/pay', async (req, res) => {
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let year = date_ob.getFullYear();
+
+    timestamp = `${Date.now()}`;
+    random = randomstring.generate(5);
+
+    id_transaksi = `${timestamp}${random}`;
+
+    const {error} = await supabase
+        .from('transaksi')
+        .insert({
+            id_transaksi: `${id_transaksi}`,
+            id_pengguna: "q321s4",
+            tanggal_transaksi: `${year}-${month}-${date}`,
+            total: req.session.total,
+            jenis_pembayaran: req.body.jenisPembayaran,
+        })
+    if (error) {
+        console.log(error);
+    }
+
+    async function insertToTransaksi(item) {
+        const { error } = await supabase
+            .from('transaction_detail')
+            .insert({
+                id_transaksi: `${id_transaksi}`,
+                id_barang: item.id_barang,
+                jumlah: item.jumlah,
+            });
+    
+        if (error) {
+            console.log(error);
+        }
+    }
+
+    const cartItems = req.session.cart;
+    
+    for (const item of cartItems) {
+        await insertToTransaksi(item);
+    }
+    
+    async function updateStock(item, barang) {
+        const newStock = parseInt(barang.stock) - parseInt(item.jumlah);
+        console.log(typeof newStock);
+        console.log(newStock)
+        console.log(barang.stock)
+        console.log(item.jumlah)
+        const { error } = await supabase
+            .from('barang')
+            .update({
+                stock: parseInt(newStock),
+            })
+            .eq('id_barang', item.id_barang)
+        if (error) {
+            console.log(error);
+        }
+    }
+
+    for (const item of cartItems) {
+        const { data, error1 } = await supabase
+            .from('barang')
+            .select('id_barang, stock')
+            .eq('id_barang', item.id_barang);
+        await updateStock(item,data[0]);
+    }
+
+    req.session.cart = [];
+    res.redirect('/transaction');
+});
+
 app.get('/recapitulation', async (req, res) => {
     try {
         const { data: transactions, error } = await supabase
@@ -244,6 +387,40 @@ app.get('/recapitulation', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 })
+
+
+app.get('/transaction-details/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log("Fetching details for transaction ID:", id); // Debugging line
+
+    try {
+        const { data, error } = await supabase
+            .from('transaction_detail')
+            .select(`
+                id_barang,
+                jumlah,
+                barang (
+                    jenis_barang,
+                    harga
+                )
+            `)
+            .eq('id_transaksi', id);
+
+        if (error) {
+            console.error('Error fetching transaction details:', error);
+            res.status(500).json({ message: 'Internal Server Error', error });
+        } else {
+            console.log("Transaction details data:", data); // Debugging line
+            res.json(data);
+        }
+    } catch (error) {
+        console.error('Server error:', error);
+        res.status(500).json({ message: 'Internal Server Error', error });
+    }
+});
+
+
+
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
