@@ -2,75 +2,47 @@
 <html>
 <head>
   <title>EFullPay Login</title>
+  <link rel="stylesheet" href="public/css/style.css">
   <style>
-    body {
-      background-color: #f2f2f2;
+    /* Add any additional styles here if needed */
+    .colored-block {
+      background-color: #B0D8DA;
+      height: 100vh; /* Ensure the colored block spans the full height */
     }
-    .login-container {
-      margin: 50px auto;
-      width: 400px;
-      background-color: #fff;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-      padding: 20px;
-    }
-    .logo {
+    /* Vertically center content */
+    .center-y {
       display: flex;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 20px;
-    }
-    .logo img {
-      width: 50px;
-      height: 50px;
-      margin-right: 10px;
-    }
-    .logo h2 {
-      color: #00304C;
-      margin: 0;
-    }
-    .input-field {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      font-size: 16px;
-    }
-    .submit-btn {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #00304C;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .submit-btn:hover {
-      background-color: #00233E;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="logo">
-      <img src="/image/efullpay_logo.png" alt="EFullPay Logo">
-      <h2>EFullPay</h2>
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <div class="col-auto col-md-3 col-xl-3 px-sm-2 px-0 colored-block">
+        <div class="d-flex flex-column align-items-sm-start px-3 pt-2 center-y">
+          <div class="justify-content-start d-flex flex-column">
+            <img src="/image/efullpay_logo.png" alt="EFullPay Logo" width="80px;" style="margin-left: -10px;">
+            <h2>EFullPay</h2>
+          </div>
+          <div class="d-flex flex-column justify-content-start">
+            <h5>Reliable point of sales</h5>
+            <h5>web application is here!</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto col-md-9 col-xl-9">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 center-y col-md-12">
+          <form action="/login" method="post" class="col-md-12">        
+              <input class="input-field" type="text" placeholder="Enter your username" name="username" required>
+              <input class="input-field" type="password" placeholder="Enter your password" name="password" required>
+            <button class="submit-btn" type="submit">Sign in</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <form action="/login" method="post">
-      <div class="input-group">
-        <label for="username">Username</label>
-        <input class="input-field" type="text" placeholder="Enter your username" name="username" required>
-      </div>
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input class="input-field" type="password" placeholder="Enter your password" name="password" required>
-      </div>
-      <button class="submit-btn" type="submit">Sign in</button>
-    </form>
   </div>
 </body>
 </html>
