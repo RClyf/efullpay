@@ -122,3 +122,7 @@ body{
     width:1000px;
     min-height:250px;
 }
+
+.error {
+    color: red;
+}

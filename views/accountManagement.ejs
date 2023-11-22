@@ -1,3 +1,7 @@
+<script>
+    var datas = <%- JSON.stringify(datas) %>;
+</script>
+
 <div class="container-fluid">
     <div class="row flex-nowrap">
         <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
@@ -35,7 +39,7 @@
                     <div class="d-flex justify-content-between">
                         <h3>Account List</h3>
                         <div class="d-flex justify-content-end align-items-center gap-3 my-2">
-                            <button onclick="openPopup()" style="border: none; padding: 0; background: none;">
+                            <button onclick="openPopup(null)" style="border: none; padding: 0; background: none;">
                                 <img src="/image/plus.png" alt="person icon" style="width: 30px; height: 30px;" >
                             </button>
                             <form method="POST" action="">
@@ -98,29 +102,33 @@
             <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
                 <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
-            <button type="submit" style="border: none; padding: 0; background: none;" onclick="openPopupAlert()">
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="confirmAndSubmit()">
                 <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
         </div>
     </div>
     <div class="p-3">
-        <form method="POST" action="/edit-from-account-management">
+        <form method="POST" action="/edit-from-account-management" onsubmit="return validateAndSubmitForm()">
             <input type="hidden" id="id_pengguna_edit" name="id_pengguna">
             <div class="py-2">
                 <h6>Username</h6>
                 <input type="text" id="username_edit" name="username" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="usernameError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Nama</h6>
                 <input type="text" id="nama_edit" name="nama" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="namaError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Email</h6>
                 <input type="email" id="email_edit" name="email" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="emailError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Password</h6>
                 <input type="text" id="password_edit" name="password" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="passwordError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Role</h6>
@@ -129,6 +137,7 @@
                     <option value="Kasir">Kasir</option>
                     <option value="KaryawanGudang">Karyawan Gudang</option>
                 </select>
+                <p id="roleError" class="error"></p>
             </div>
             <button type="submit" id="submitButton" style="display: none;">Submit</button>
         </form>
@@ -149,13 +158,79 @@
 </div>
 
 <script>
+    function confirmAndSubmit() {
+        if (validateAndSubmitForm()) {
+            // Display a confirmation dialog
+            openPopupAlert();          
+        }
+    }
+    
+    function validateAndSubmitForm() {
+        // Reset error messages
+        document.getElementById('usernameError').textContent = '';
+        document.getElementById('namaError').textContent = '';
+        document.getElementById('emailError').textContent = '';
+        document.getElementById('passwordError').textContent = '';
+        document.getElementById('roleError').textContent = '';
+
+        // Get form values
+        var id_pengguna = document.getElementById('id_pengguna_edit').value;
+        var username = document.getElementById('username_edit').value;
+        var nama = document.getElementById('nama_edit').value;
+        var email = document.getElementById('email_edit').value;
+        var password = document.getElementById('password_edit').value;
+        var role = document.getElementById('role_edit').value;
+
+        // Simple validation examples
+        if (username.trim() === '') {
+            document.getElementById('usernameError').textContent = 'Username is required';
+        }
+        if(id_pengguna==='' && datas.some(item => item.username === username)){
+            document.getElementById('usernameError').textContent = 'Username must be unique';
+        }
+        else if(datas.some(item => item.username === username) && datas.filter(item => item.id_pengguna === id_pengguna)[0].username!=username){
+            document.getElementById('usernameError').textContent = 'Username must be unique';
+        }
+
+        if (nama.trim() === '') {
+            document.getElementById('namaError').textContent = 'Nama is required';
+        }
+
+        if (email.trim() === '') {
+            document.getElementById('emailError').textContent = 'Email is required';
+        }
+
+        if (password.trim() === '') {
+            document.getElementById('passwordError').textContent = 'Password is required';
+        }
+
+        if (role.trim() === '') {
+            document.getElementById('roleError').textContent = 'Role is required';
+        }
+
+        // If any validation fails, prevent form submission
+        if (document.getElementById('usernameError').textContent || document.getElementById('namaError').textContent || document.getElementById('emailError').textContent || document.getElementById('passwordError').textContent || document.getElementById('roleError').textContent) {
+            return false;
+        }
+
+        // If all validations pass
+        return true;
+    }
+
+    function submitForm() {
+        document.getElementById('submitButton').click();
+        document.getElementById('popupAlert').style.display = 'none';
+    }
+</script>
+
+<script>
     function openPopup(accountData) {
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         const popupHeader = document.getElementById('popup-header');
         var account = JSON.parse(accountData);
 
-        if(account.id_pengguna !== undefined){
+        if(accountData){
             document.getElementById('id_pengguna_edit').value = account.id_pengguna;
             document.getElementById('username_edit').value = account.username;
             document.getElementById('nama_edit').value = account.nama;
@@ -188,11 +263,6 @@
 
     function closePopupAlert(){
         document.getElementById('overlay').style.display = 'none';
-        document.getElementById('popupAlert').style.display = 'none';
-    }
-
-    function submitForm() {
-        document.getElementById('submitButton').click();
         document.getElementById('popupAlert').style.display = 'none';
     }
 
