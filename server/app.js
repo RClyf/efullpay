@@ -69,8 +69,31 @@ app.get('/', (req, res) => {
 
 // Login
 app.get('/login', (req, res) => {
-    
-})
+    res.render('index', { error: null });
+});
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const { data, error } = await supabase
+            .from('account')
+            .select()
+            .eq('username', username)
+            .eq('password', password)
+            .single();
+
+        if (error || !data) {
+            return res.render('index', { error: 'Invalid username or password' });
+        }
+
+        res.redirect('/home'); 
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 // Home (Home Page)
 app.get('/home', (req, res) => {

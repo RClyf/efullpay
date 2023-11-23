@@ -1,5 +1,49 @@
-<div class="mt-4 sub-text">
-  <p class="lets text-center">Welcome to EFullPay</p><br>
-  <p class="lets text-center">Please Sign In</p><br>
-  <h1 class="lets text-center">Landing Page</h1>
-</div>  
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EFullPay Login</title>
+  <link rel="stylesheet" href="public/css/style.css">
+  <style>
+    /* Add any additional styles here if needed */
+    .colored-block {
+      background-color: #B0D8DA;
+      height: 100vh; /* Ensure the colored block spans the full height */
+    }
+    /* Vertically center content */
+    .center-y {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <div class="col-auto col-md-3 col-xl-3 px-sm-2 px-0 colored-block">
+        <div class="d-flex flex-column align-items-sm-start px-3 pt-2 center-y">
+          <div class="justify-content-start d-flex flex-column">
+            <img src="/image/efullpay_logo.png" alt="EFullPay Logo" width="80px;" style="margin-left: -10px;">
+            <h2>EFullPay</h2>
+          </div>
+          <div class="d-flex flex-column justify-content-start">
+            <h5>Reliable point of sales</h5>
+            <h5>web application is here!</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto col-md-9 col-xl-9">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 center-y col-md-12">
+          <form action="/login" method="post" class="col-md-12">        
+              <h1 style="margin-left: 60px;margin-bottom: 25px;">Sign in</h1>
+              <input class="input-field" type="text" placeholder="Enter your username" name="username" required>
+              <input class="input-field" type="password" placeholder="Enter your password" name="password" required>
+            <button class="submit-btn" type="submit">Sign in</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

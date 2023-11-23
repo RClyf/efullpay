@@ -1,6 +1,56 @@
 body{
-    color:#313133;
+    /* Existing body styles */
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
+
+
+/* Existing body styles here */
+
+/* New styles for login container */
+.login-container {
+  background-color: #B0D8DA;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: white;
+  width: 300px;
+  margin: 0 auto;
+}
+
+/* New styles for input fields */
+.input-field {
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  box-shadow: none !important;
+  border-bottom : 1px solid rgba(0, 0, 0, 0.3) !important;
+
+}
+
+/* New styles for submit button */
+.submit-btn {
+  background-color: #313133;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #000000;
+}
+
 
 .dropdown {
     position: relative;
@@ -100,29 +150,55 @@ body{
     color: #ffffff;
 }
 
-.btn2 {
-    width: 100px;
-    margin: 5px;
-    background-color: #d9d9d9;
-    color: #00304C;
-    outline: transparent;
-    border: none;
-    border-radius: 0.375rem;
-}
-
-.popup-container {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.custom-body {
+    background-color: #f2f2f2;
+  }
+  .login-container {
+    margin: 50px auto;
+    width: 400px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    width:1000px;
-    min-height:250px;
-}
-
-.error {
-    color: red;
-}
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+ 
+  }
+  .logo img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    margin-left:20px !important;
+  }
+  .logo h2 {
+    color: #00304C;
+    margin: 0;
+  }
+  .input-field {
+    display: block;
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    border: none;
+    font-size: 16px;
+    text-align: start;
+  }
+  .submit-btn {
+    display: block;
+    width: 30%;
+    padding: 10px;
+    background-color: #B0D8DA;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 250px;
+  }
+  .submit-btn:hover {
+    background-color: #00233E;
+  }
