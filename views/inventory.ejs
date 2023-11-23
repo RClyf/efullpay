@@ -10,35 +10,41 @@
                     <span class="fs-5 d-none d-sm-inline" style="color:#00304C;"><h2><img src="/image/efullpay_logo.png" style="width:100px; height:100px; margin:0!; padding:0!;">EFullPay</h2></span>
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a href="/account-management" class="nav-link align-middle px-0">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin') { %>
+                        <li class="nav-item">
+                            <a href="/account-management" class="nav-link align-middle px-0">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
+                            </a>
+                        </li>
+                    <% } %>
                     <li>
                         <a href="/inventory" class="nav-link align-middle px-0">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C; text-decoration:underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration:underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
                         </a>
                     </li>
-                    <li>
-                        <a href="/transaction" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/recapitulation" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin' || user.role == 'Kasir') { %>
+                        <li>
+                            <a href="/transaction" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% if (user.role == 'Admin') { %>
+                        <li>
+                            <a href="/recapitulation" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
+                            </a>
+                        </li>
+                    <% } %> 
                 </ul>
                 <hr>
-                <div class="dropdown pb-4">
+                <div class="dropdown pb-4" style="left:0%">
                     <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="/image/profile.png" alt="profile-icon" width="30" height="30" class="rounded-circle">
-                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;">User 1</span>
+                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;"><%= user.nama %></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        <li><a class="dropdown-item" href="/signout">Sign out</a></li>
                     </ul>
                 </div>
             </div>
@@ -80,19 +86,21 @@
                                 <td><%= barang.jenis_barang %></td>
                                 <td><%= barang.stock %></td>
                                 <td><%= barang.harga %></td>
-                                <td style="width:400px;">
-                                    <span class="d-flex align-items-center gap-3 mx-5">
-                                        <form method="POST" action="/remove-from-inventory">
-                                            <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
-                                            <button type="submit" style="border: none; padding: 0; background: none;">
-                                                <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
-                                            </button>
-                                        </form>
-                                        <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
-                                    </div>  
-                                      <button class="btn" type="submit" onclick="openPopup('<%= JSON.stringify(barang) %>')">Edit</button>
-                                    </span>
-                                </td>
+                                <% if (user.role == 'KaryawanGudang' || user.role =='Admin') { %>
+                                    <td style="width:400px;">
+                                        <span class="d-flex align-items-center gap-3 mx-5">
+                                            <form method="POST" action="/remove-from-inventory">
+                                                <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
+                                                <button type="submit" style="border: none; padding: 0; background: none;">
+                                                    <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                                                </button>
+                                            </form>
+                                            <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
+                                        </div>  
+                                          <button class="btn" type="submit" onclick="openPopup('<%= JSON.stringify(barang) %>')">Edit</button>
+                                        </span>
+                                    </td>
+                                <% } %>
                             </tr>
                         <% }) %>
                        
