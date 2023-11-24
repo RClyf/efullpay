@@ -225,3 +225,6 @@ body{
 .submit-btn:hover {
   background-color: #00233E;
 }
+.error {
+  color: red;
+}
