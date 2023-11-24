@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const axios = require("axios");
 const randomstring = require("randomstring");
 const generateUniqueID = require('../utility/utility'); 
+const bcrypt = require('bcrypt');
 
 //file upload
 const multer = require("multer");
@@ -78,16 +79,31 @@ app.post('/login', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('account')
-            .select('nama, role')
+            .select('id_pengguna, password, nama, role') // Fetch the hashed password from the database
             .eq('username', username)
-            .eq('password', password)
             .single();
+
         if (error || !data) {
             return res.render('index', { error: 'Invalid username or password' });
         }
-        req.session.user = data
-        req.session.cart = [];
-        res.redirect('/home'); 
+
+        // Compare the entered password with the hashed password from the database
+        const passwordMatch = await bcrypt.compare(password, data.password);
+
+        if (passwordMatch) {
+            // Passwords match, set user data in the session
+            req.session.user = {
+                id_pengguna: data.id_pengguna,
+                nama: data.nama,
+                role: data.role,
+            };
+
+            req.session.cart = [];
+            res.redirect('/home');
+        } else {
+            // Passwords do not match
+            return res.render('index', { error: 'Invalid username or password' });
+        }
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -151,7 +167,6 @@ app.get('/account-management',async (req, res) => {
 
 app.post('/remove-from-account', async (req, res) => {
     i = -1;
-    console.log(req.body.id_pengguna)
     const { data, error } = await supabase
       .from('account') 
       .delete()
@@ -162,6 +177,7 @@ app.post('/remove-from-account', async (req, res) => {
 
 app.post('/edit-from-account-management', async (req, res) => {
     const { id_pengguna,username,nama,email,password,role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     if(id_pengguna!==''){
         const { data, error } = await supabase
@@ -169,7 +185,7 @@ app.post('/edit-from-account-management', async (req, res) => {
         .update({
             id_pengguna,
             username,
-            password,
+            password: hashedPassword,
             nama,
             email,
             role
@@ -183,7 +199,7 @@ app.post('/edit-from-account-management', async (req, res) => {
             {
             id_pengguna:generateUniqueID(),
             username,
-            password,
+            password: hashedPassword,
             nama,
             email,
             role
