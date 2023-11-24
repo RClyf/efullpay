@@ -65,6 +65,7 @@ app.get('/', (req, res) => {
     res.render('index', {
         layout: 'layouts/index', 
         title:'Index',
+        errmsg: req.flash('errmsg'),
     });
 })
 
@@ -84,7 +85,9 @@ app.post('/login', async (req, res) => {
             .single();
 
         if (error || !data) {
-            return res.render('index', { error: 'Invalid username or password' });
+            req.flash('errmsg', 'Silakan cek username dan password anda');
+            res.redirect('/')
+            return
         }
 
         // Compare the entered password with the hashed password from the database
@@ -105,8 +108,8 @@ app.post('/login', async (req, res) => {
             return res.render('index', { error: 'Invalid username or password' });
         }
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+        req.flash('errmsg', 'Silakan cek username dan password anda');
+        res.redirect('/')
     }
 });
 
