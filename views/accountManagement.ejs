@@ -1,41 +1,60 @@
+<script>
+    var datas = <%- JSON.stringify(datas) %>;
+</script>
+
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA; width:250px; position:fixed;">
             <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
                 <a href="/home" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none">
                     <span class="fs-5 d-none d-sm-inline" style="color:#00304C;"><h2><img src="/image/efullpay_logo.png" style="width:100px; height:100px; margin:0!; padding:0!;">EFullPay</h2></span>
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin') { %>
+                        <li class="nav-item">
+                            <a href="/account-management" class="nav-link align-middle px-0">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration:underline;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
+                            </a>
+                        </li>
+                    <% } %>
                     <li>
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration: underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
+                        <a href="/inventory" class="nav-link align-middle px-0">
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                            </i> <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin' || user.role == 'Kasir') { %>
+                        <li>
+                            <a href="/transaction" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% if (user.role == 'Admin') { %>
+                        <li>
+                            <a href="/recapitulation" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
+                            </a>
+                        </li>
+                    <% } %> 
                 </ul>
                 <hr>
+                <div class="dropdown pb-4" style="left:0%">
+                    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/image/profile.png" alt="profile-icon" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;"><%= user.nama %></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <li><a class="dropdown-item" href="/signout">Sign out</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="col py-3">
+        <div class="col py-3" style="margin-left: 250px;">
             <div class="mt-4 sub-text">
                     <div class="d-flex justify-content-between">
                         <h3>Account List</h3>
                         <div class="d-flex justify-content-end align-items-center gap-3 my-2">
-                            <button onclick="openPopup()" style="border: none; padding: 0; background: none;">
+                            <button onclick="openPopup(null)" style="border: none; padding: 0; background: none;">
                                 <img src="/image/plus.png" alt="person icon" style="width: 30px; height: 30px;" >
                             </button>
                             <form method="POST" action="">
@@ -98,29 +117,33 @@
             <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
                 <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
-            <button type="submit" style="border: none; padding: 0; background: none;" onclick="openPopupAlert()">
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="confirmAndSubmit()">
                 <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
         </div>
     </div>
     <div class="p-3">
-        <form method="POST" action="/edit-from-account-management">
+        <form method="POST" action="/edit-from-account-management" onsubmit="return validateAndSubmitForm()">
             <input type="hidden" id="id_pengguna_edit" name="id_pengguna">
             <div class="py-2">
                 <h6>Username</h6>
                 <input type="text" id="username_edit" name="username" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="usernameError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Nama</h6>
                 <input type="text" id="nama_edit" name="nama" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="namaError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Email</h6>
                 <input type="email" id="email_edit" name="email" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="emailError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Password</h6>
                 <input type="text" id="password_edit" name="password" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="passwordError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Role</h6>
@@ -129,6 +152,7 @@
                     <option value="Kasir">Kasir</option>
                     <option value="KaryawanGudang">Karyawan Gudang</option>
                 </select>
+                <p id="roleError" class="error"></p>
             </div>
             <button type="submit" id="submitButton" style="display: none;">Submit</button>
         </form>
@@ -149,13 +173,79 @@
 </div>
 
 <script>
+    function confirmAndSubmit() {
+        if (validateAndSubmitForm()) {
+            // Display a confirmation dialog
+            openPopupAlert();          
+        }
+    }
+    
+    function validateAndSubmitForm() {
+        // Reset error messages
+        document.getElementById('usernameError').textContent = '';
+        document.getElementById('namaError').textContent = '';
+        document.getElementById('emailError').textContent = '';
+        document.getElementById('passwordError').textContent = '';
+        document.getElementById('roleError').textContent = '';
+
+        // Get form values
+        var id_pengguna = document.getElementById('id_pengguna_edit').value;
+        var username = document.getElementById('username_edit').value;
+        var nama = document.getElementById('nama_edit').value;
+        var email = document.getElementById('email_edit').value;
+        var password = document.getElementById('password_edit').value;
+        var role = document.getElementById('role_edit').value;
+
+        // Simple validation examples
+        if (username.trim() === '') {
+            document.getElementById('usernameError').textContent = 'Username is required';
+        }
+        if(id_pengguna==='' && datas.some(item => item.username === username)){
+            document.getElementById('usernameError').textContent = 'Username must be unique';
+        }
+        else if(datas.some(item => item.username === username) && datas.filter(item => item.id_pengguna === id_pengguna)[0].username!=username){
+            document.getElementById('usernameError').textContent = 'Username must be unique';
+        }
+
+        if (nama.trim() === '') {
+            document.getElementById('namaError').textContent = 'Nama is required';
+        }
+
+        if (email.trim() === '') {
+            document.getElementById('emailError').textContent = 'Email is required';
+        }
+
+        if (password.trim() === '') {
+            document.getElementById('passwordError').textContent = 'Password is required';
+        }
+
+        if (role.trim() === '') {
+            document.getElementById('roleError').textContent = 'Role is required';
+        }
+
+        // If any validation fails, prevent form submission
+        if (document.getElementById('usernameError').textContent || document.getElementById('namaError').textContent || document.getElementById('emailError').textContent || document.getElementById('passwordError').textContent || document.getElementById('roleError').textContent) {
+            return false;
+        }
+
+        // If all validations pass
+        return true;
+    }
+
+    function submitForm() {
+        document.getElementById('submitButton').click();
+        document.getElementById('popupAlert').style.display = 'none';
+    }
+</script>
+
+<script>
     function openPopup(accountData) {
         document.getElementById('overlay').style.display = 'block';
         document.getElementById('popup').style.display = 'block';
         const popupHeader = document.getElementById('popup-header');
         var account = JSON.parse(accountData);
 
-        if(account.id_pengguna !== undefined){
+        if(accountData){
             document.getElementById('id_pengguna_edit').value = account.id_pengguna;
             document.getElementById('username_edit').value = account.username;
             document.getElementById('nama_edit').value = account.nama;
@@ -168,6 +258,7 @@
             document.getElementById('username_edit').value =''
             document.getElementById('nama_edit').value = ''
             document.getElementById('email_edit').value = ''
+            document.getElementById('password_edit').value = ''
             document.getElementById('role_edit').value = ''
         }
 
@@ -188,11 +279,6 @@
 
     function closePopupAlert(){
         document.getElementById('overlay').style.display = 'none';
-        document.getElementById('popupAlert').style.display = 'none';
-    }
-
-    function submitForm() {
-        document.getElementById('submitButton').click();
         document.getElementById('popupAlert').style.display = 'none';
     }
 

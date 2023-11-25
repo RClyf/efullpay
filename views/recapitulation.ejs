@@ -4,78 +4,110 @@
 
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA; width:250px; position:fixed;">
             <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
                 <a href="/home" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none">
                     <span class="fs-5 d-none d-sm-inline" style="color:#00304C;"><h2><img src="/image/efullpay_logo.png" style="width:100px; height:100px; margin:0!; padding:0!;">EFullPay</h2></span>
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin') { %>
+                        <li class="nav-item">
+                            <a href="/account-management" class="nav-link align-middle px-0">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
+                            </a>
+                        </li>
+                    <% } %>
                     <li>
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration: underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
+                        <a href="/inventory" class="nav-link align-middle px-0">
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                            </i> <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin' || user.role == 'Kasir') { %>
+                        <li>
+                            <a href="/transaction" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% if (user.role == 'Admin') { %>
+                        <li>
+                            <a href="/recapitulation" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C; text-decoration:underline;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
+                            </a>
+                        </li>
+                    <% } %> 
                 </ul>
                 <hr>
+                <div class="dropdown pb-4" style="left:0%">
+                    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/image/profile.png" alt="profile-icon" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;"><%= user.nama %></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <li><a class="dropdown-item" href="/signout">Sign out</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         
-       <!-- Main content -->
-<div class="col py-3">
-    <div class="mt-4 sub-text">
-        <h3>Recapitulation</h3>
-        <table class="table table-bordered table-striped table-hover">
-            <thead style="background-color:#B0D8DA;">
-                <tr>
-                    <th scope="col">Transaction ID</th>
-                    <th scope="col">Transaction Date</th> 
-                    <th scope="col">Jenis Pembayaran</th> 
-                    <th scope="col">Total Amount</th>
-                    <th scope="col"style="width: 150px;">Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% transactions.forEach(function(transaction) { %>
-                <tr>
-                    <td><%= transaction.id_transaksi %></td>
-                    <td><%= transaction.tanggal_transaksi %></td> 
-                    <td><%= transaction.jenis_pembayaran %></td> 
-                    <td>Rp <%= transaction.total.toLocaleString('id-ID') %></td>
-                    <td>
-                        <!-- Detail button -->
-                        <div class="d-flex">
-                            <button class="btn details-btn" onclick="openDetailsPopup('<%= transaction.id_transaksi %>')">Details</button>
-                            
-                            <form method="POST" action="/remove-from-transaksi" style="margin-left: 10px;"> <!-- Adjust margin as needed -->
-                                <input type="hidden" value="<%= transaction.id_transaksi %>" id="id_transaksi" name="id_transaksi">
-                                <button type="submit" class="delete-button">
-                                    <!-- Use CSS to set the image as a background and center it -->
-                                </button>
-                            </form>
-                        </div>
-                        
-                        
-                    </td>
+        <!-- Main content -->  
+        <div class="col py-3" style="margin-left: 250px;">
+            <div class="mt-4 sub-text">      
+                <h3>Recapitulation</h3>
+                 <!-- Filter Section -->
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
 
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
+            <div class="mb-3">
+                <label for="endDate" class="form-label">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+
+            <button class="btn details-btn" onclick="filterTransactions()">Filter</button>
+
+            <!-- End Filter Section -->
+
+                <table class="table table-bordered table-striped table-hover">
+                    <thead style="background-color:#B0D8DA;">
+                        <tr>
+                            <th scope="col">Transaction ID</th>
+                            <th scope="col">Transaction Date</th> 
+                            <th scope="col">Jenis Pembayaran</th> 
+                            <th scope="col">Total Amount</th>
+                            <th scope="col"style="width: 150px;">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% transactions.forEach(function(transaction) { %>
+                        <tr>
+                            <td><%= transaction.id_transaksi %></td>
+                            <td><%= transaction.tanggal_transaksi %></td> 
+                            <td><%= transaction.jenis_pembayaran %></td> 
+                            <td>Rp <%= transaction.total.toLocaleString('id-ID') %></td>
+                            <td>
+                                <!-- Detail button -->
+                                <div class="d-flex">
+                                    <button class="btn details-btn" onclick="openDetailsPopup('<%= transaction.id_transaksi %>')">Details</button>
+                                    
+                                    <form method="POST" action="/remove-from-transaksi" style="margin-left: 10px;"> <!-- Adjust margin as needed -->
+                                        <input type="hidden" value="<%= transaction.id_transaksi %>" id="id_transaksi" name="id_transaksi">
+                                        <button type="submit" class="delete-button">
+                                            <!-- Use CSS to set the image as a background and center it -->
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                
+                            </td>
+
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -89,6 +121,76 @@
 </div>
 
 <script>
+    displayTotalAmountSum(transactions);
+    
+    function displayTotalAmountSum(transactions) {
+        // Calculate and display the sum of the total amount for all transactions
+        var totalAmountSum = transactions.reduce((total, transaction) => total + transaction.total, 0);
+    
+        var tableBody = document.querySelector('tbody');
+    
+        // Add a new row at the bottom of the table displaying the sum
+        var sumRow = `<tr style="background-color:#B0D8DA; font-weight:bolder;">
+            <td colspan="3">Sum of Total Amount</td>
+            <td>Rp ${totalAmountSum.toLocaleString('id-ID')}</td>
+        </tr>`;
+    
+        tableBody.innerHTML += sumRow;
+    }
+    
+    function filterTransactions() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        // You can perform additional validation on startDate and endDate if needed
+
+        // Filter transactions based on date range
+        var filteredTransactions = transactions.filter(function (transaction) {
+            return transaction.tanggal_transaksi >= startDate && transaction.tanggal_transaksi <= endDate;
+        });
+
+        // Update the table with filtered transactions
+        updateTable(filteredTransactions);
+    }
+
+    function updateTable(filteredTransactions) {
+        // Update the table content with filtered transactions
+        var tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = ''; // Clear existing content
+    
+        // Add rows for filtered transactions
+        filteredTransactions.forEach(function (transaction) {
+            var row = `<tr>
+                <td>${transaction.id_transaksi}</td>
+                <td>${transaction.tanggal_transaksi}</td> 
+                <td>${transaction.jenis_pembayaran}</td> 
+                <td>Rp ${transaction.total.toLocaleString('id-ID')}</td>
+                <td>
+                    <div class="d-flex">
+                        <button class="btn details-btn" onclick="openDetailsPopup('${transaction.id_transaksi}')">Details</button>
+                        
+                        <form method="POST" action="/remove-from-transaksi" style="margin-left: 10px;">
+                            <input type="hidden" value="${transaction.id_transaksi}" id="id_transaksi" name="id_transaksi">
+                            <button type="submit" class="delete-button"></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>`;
+    
+            tableBody.innerHTML += row;
+        });
+    
+        // Calculate and display the sum of the total amount
+        var totalAmount = filteredTransactions.reduce((total, transaction) => total + transaction.total, 0);
+        var sumRow = `<tr style="background-color:#B0D8DA; font-weight:bolder;">
+            <td colspan="3">Sum of Total Amount</td>
+            <td>Rp ${totalAmount.toLocaleString('id-ID')}</td>
+        </tr>`;
+    
+        tableBody.innerHTML += sumRow;
+    }
+    
+
     // Function to open the details popup and fetch transaction details
     function openDetailsPopup(id_transaksi) {
         // Show the overlay
@@ -130,13 +232,9 @@
             })
             .catch(error => {
                 console.error('Error fetching transaction details:', error);
-            });
+            });  
     }
     
-    
-    
-    
-
 
 
     // Function to close the details popup

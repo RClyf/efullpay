@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const axios = require("axios");
 const randomstring = require("randomstring");
 const generateUniqueID = require('../utility/utility'); 
+const bcrypt = require('bcrypt');
 
 //file upload
 const multer = require("multer");
@@ -64,38 +65,111 @@ app.get('/', (req, res) => {
     res.render('index', {
         layout: 'layouts/index', 
         title:'Index',
+        errmsg: req.flash('errmsg'),
     });
 })
 
 // Login
 app.get('/login', (req, res) => {
-    
+    res.render('index', { error: null });
+});
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const { data, error } = await supabase
+            .from('account')
+            .select('id_pengguna, password, nama, role') // Fetch the hashed password from the database
+            .eq('username', username)
+            .single();
+
+        if (error || !data) {
+            req.flash('errmsg', 'Silakan cek username dan password anda');
+            res.redirect('/')
+            return
+        }
+
+        // Compare the entered password with the hashed password from the database
+        const passwordMatch = await bcrypt.compare(password, data.password);
+
+        if (passwordMatch) {
+            // Passwords match, set user data in the session
+            req.session.user = {
+                id_pengguna: data.id_pengguna,
+                nama: data.nama,
+                role: data.role,
+            };
+
+            req.session.cart = [];
+            res.redirect('/home');
+        } else {
+            // Passwords do not match
+            return res.render('index', { error: 'Invalid username or password' });
+        }
+    } catch (err) {
+        req.flash('errmsg', 'Silakan cek username dan password anda');
+        res.redirect('/')
+    }
+});
+
+app.get('/signout', (req, res) => {
+    req.session.destroy
+    res.redirect('/');
 })
+
 
 // Home (Home Page)
 app.get('/home', (req, res) => {
-    req.session.cart = [];
-    res.render('home', {
-        layout: 'layouts/layout',
-        title:'Home',
-    });
+    if(req.session.user){
+        res.render('home', {
+            layout: 'layouts/layout',
+            title:'Home',
+            user: req.session.user,
+        });
+    }
+    else {
+        res.render('unauthorized', {
+            layout: 'layouts/layout',
+            title:'401 Unauthorized',
+            messages: 'Silakan <a href="/">login</a> terlebih dahulu.'
+        });
+    }
 })
 
 // Account Management
 app.get('/account-management',async (req, res) => {
-    const {data, error} = await supabase
-    .from('account')
-    .select()
-    res.render('accountManagement', {
-        layout: 'layouts/layout',
-        title:'Account Management',
-        datas: data,
-    });
+    if (req.session.user){
+        if (req.session.user.role == 'Admin'){
+            const {data, error} = await supabase
+                .from('account')
+                .select()
+                res.render('accountManagement', {
+                    layout: 'layouts/layout',
+                    title:'Account Management',
+                    datas: data,
+                    user: req.session.user,
+                });
+        }
+        else {
+            res.render('unauthorized', {
+                layout: 'layouts/layout',
+                title:'401 Unauthorized',
+                messages: 'Silakan <a href="/">login</a> sebagai Admin terlebih dahulu.'
+            });
+        }
+    }
+    else {
+        res.render('unauthorized', {
+            layout: 'layouts/layout',
+            title:'401 Unauthorized',
+            messages: 'Silakan <a href="/">login</a> sebagai Admin terlebih dahulu.'
+        });
+    }
 })
 
 app.post('/remove-from-account', async (req, res) => {
     i = -1;
-    console.log(req.body.id_pengguna)
     const { data, error } = await supabase
       .from('account') 
       .delete()
@@ -106,6 +180,7 @@ app.post('/remove-from-account', async (req, res) => {
 
 app.post('/edit-from-account-management', async (req, res) => {
     const { id_pengguna,username,nama,email,password,role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     if(id_pengguna!==''){
         const { data, error } = await supabase
@@ -113,7 +188,7 @@ app.post('/edit-from-account-management', async (req, res) => {
         .update({
             id_pengguna,
             username,
-            password,
+            password: hashedPassword,
             nama,
             email,
             role
@@ -127,7 +202,7 @@ app.post('/edit-from-account-management', async (req, res) => {
             {
             id_pengguna:generateUniqueID(),
             username,
-            password,
+            password: hashedPassword,
             nama,
             email,
             role
@@ -140,14 +215,24 @@ app.post('/edit-from-account-management', async (req, res) => {
 
 // Inventory
 app.get('/inventory', async (req, res) => {
-    const {data, error} = await supabase
-        .from('barang')
-        .select()
-    res.render('inventory', {
-        layout: 'layouts/layout',
-        title:'Inventory',
-        datas: data,
-    });
+    if (req.session.user){
+        const {data, error} = await supabase
+            .from('barang')
+            .select()
+        res.render('inventory', {
+            layout: 'layouts/layout',
+            title:'Inventory',
+            datas: data,
+            user: req.session.user,
+        });
+    }
+    else {
+        res.render('unauthorized', {
+            layout: 'layouts/layout',
+            title:'401 Unauthorized',
+            messages: 'Silakan <a href="/">login</a> terlebih dahulu.'
+        });
+    }
 })    
 
 app.post('/remove-from-inventory', async (req, res) => {
@@ -169,9 +254,7 @@ app.post('/remove-from-transaksi', async (req, res) => {
 });
 
 app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
-    const { id_barang, jenis_barang, stock, harga } = req.body;
-    var fileedit = req.file.originalname.replace(/ /g,"_");
-
+    const { id_barang, jenis_barang, stock, harga,deskripsi } = req.body;
     if(id_barang!==''){
         const { data, error } = await supabase
         .from('barang')
@@ -183,6 +266,7 @@ app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
         .eq('id_barang', id_barang);
     }
     else{
+        var fileedit = req.file.originalname.replace(/ /g,"_");
         const { data, error } = await supabase
         .from('barang')
         .upsert([
@@ -191,7 +275,7 @@ app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
             jenis_barang,
             stock,
             harga, 
-            deskripsi:'Ini adalah deskripsi barang untuk data dummy. ',
+            deskripsi,
             image_name: `${req.body.jenis_barang}_${fileedit}`,
             },
         ]);
@@ -203,21 +287,40 @@ app.post('/edit-from-inventory', upload.single("image") ,async (req, res) => {
 
 // Transaction
 app.get('/transaction', async (req, res) => {
-    req.session.total = 0
-    req.session.cart.forEach(item => {
-        req.session.total += item.jumlah * item.harga;
-    })
-    const {data, error} = await supabase
-        .from('barang')
-        .select()
-    res.render('transaction', {
-        layout: 'layouts/layout',
-        title:'Transaction',
-        datas: data,
-        cart: req.session.cart,
-        total: req.session.total,
-        editjumlahmsg: req.flash('edit-jumlah-msg'),
-    });
+    if (req.session.user){
+        if (req.session.user.role == 'Admin' || req.session.user.role == 'Kasir'){
+            req.session.total = 0
+            req.session.cart.forEach(item => {
+                req.session.total += item.jumlah * item.harga;
+            })
+            const {data, error} = await supabase
+                .from('barang')
+                .select()
+            res.render('transaction', {
+                layout: 'layouts/layout',
+                title:'Transaction',
+                datas: data,
+                cart: req.session.cart,
+                total: req.session.total,
+                editjumlahmsg: req.flash('edit-jumlah-msg'),
+                user: req.session.user,
+            });
+        }
+        else {
+            res.render('unauthorized', {
+                layout: 'layouts/layout',
+                title:'401 Unauthorized',
+                messages: 'Silakan <a href="/">login</a> sebagai Admin / Kasir terlebih dahulu.'
+            });
+        }
+    }
+    else {
+        res.render('unauthorized', {
+            layout: 'layouts/layout',
+            title:'401 Unauthorized',
+            messages: 'Silakan <a href="/">login</a> sebagai Admin / Kasir terlebih dahulu.'
+        });
+    }
 })
 
 app.post('/add-to-cart', async (req, res) => {
@@ -277,6 +380,19 @@ app.post('/pay', async (req, res) => {
 
     id_transaksi = `${timestamp}${random}`;
 
+    const {error} = await supabase
+        .from('transaksi')
+        .insert({
+            id_transaksi: `${id_transaksi}`,
+            id_pengguna: "q321s4",
+            tanggal_transaksi: `${year}-${month}-${date}`,
+            total: req.session.total,
+            jenis_pembayaran: req.body.jenisPembayaran,
+        })
+    if (error) {
+        console.log(error);
+    }
+
     async function insertToTransaksi(item) {
         const { error } = await supabase
             .from('transaction_detail')
@@ -297,82 +413,129 @@ app.post('/pay', async (req, res) => {
         await insertToTransaksi(item);
     }
     
-    const {error} = await supabase
-        .from('transaksi')
-        .insert({
-            id_transaksi: `${id_transaksi}`,
-            id_pengguna: "q321s4",
-            tanggal_transaksi: `${year}-${month}-${date}`,
-            total: req.session.total,
-            jenis_pembayaran: req.body.jenisPembayaran,
-        })
-    if (error) {
-        console.log(error);
+    async function updateStock(item, barang) {
+        const newStock = parseInt(barang.stock) - parseInt(item.jumlah);
+        console.log(typeof newStock);
+        console.log(newStock)
+        console.log(barang.stock)
+        console.log(item.jumlah)
+        const { error } = await supabase
+            .from('barang')
+            .update({
+                stock: parseInt(newStock),
+            })
+            .eq('id_barang', item.id_barang)
+        if (error) {
+            console.log(error);
+        }
     }
+
+    for (const item of cartItems) {
+        const { data, error1 } = await supabase
+            .from('barang')
+            .select('id_barang, stock')
+            .eq('id_barang', item.id_barang);
+        await updateStock(item,data[0]);
+    }
+
     req.session.cart = [];
     res.redirect('/transaction');
 });
 
 app.get('/recapitulation', async (req, res) => {
-    try {
-        const { data: transactions, error } = await supabase
-            .from('transaksi')
-            .select()
+    if (req.session.user){
+        if (req.session.user.role == 'Admin'){
+            try {
+                const { data: transactions, error } = await supabase
+                    .from('transaksi')
+                    .select()
+                
+                if (error) {
+                    console.error(error);
+                    return res.status(500).send('Internal Server Error');
+                }
         
-        if (error) {
-            console.error(error);
-            return res.status(500).send('Internal Server Error');
+                // Calculate total sales
+                const totalSales = transactions.reduce((total, transaction) => total + transaction.total, 0);
+        
+                // Render the recapitulation page with transaction data and total sales
+                res.render('recapitulation', {
+                    layout: 'layouts/layout',
+                    title: 'Recapitulation',
+                    transactions: transactions,
+                    totalSales: totalSales,
+                    user: req.session.user,
+                });
+            } catch (err) {
+                console.error(err);
+                res.status(500).send('Internal Server Error');
+            }
         }
-
-        // Calculate total sales
-        const totalSales = transactions.reduce((total, transaction) => total + transaction.total, 0);
-
-        // Render the recapitulation page with transaction data and total sales
-        res.render('recapitulation', {
+        else {
+            res.render('unauthorized', {
+                layout: 'layouts/layout',
+                title:'401 Unauthorized',
+                messages: 'Silakan <a href="/">login</a> sebagai Admin terlebih dahulu.'
+            });
+        }
+    }
+    else {
+        res.render('unauthorized', {
             layout: 'layouts/layout',
-            title: 'Recapitulation',
-            transactions: transactions,
-            totalSales: totalSales,
+            title:'401 Unauthorized',
+            messages: 'Silakan <a href="/">login</a> sebagai Admin terlebih dahulu.'
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
     }
 })
 
 
 app.get('/transaction-details/:id', async (req, res) => {
-    const { id } = req.params;
-    console.log("Fetching details for transaction ID:", id); // Debugging line
+    if (req.session.user){
+        if (req.session.user.role == 'Admin'){
+            const { id } = req.params;
+            console.log("Fetching details for transaction ID:", id); // Debugging line
 
-    try {
-        const { data, error } = await supabase
-            .from('transaction_detail')
-            .select(`
-                id_barang,
-                jumlah,
-                barang (
-                    jenis_barang,
-                    harga
-                )
-            `)
-            .eq('id_transaksi', id);
+            try {
+                const { data, error } = await supabase
+                    .from('transaction_detail')
+                    .select(`
+                        id_barang,
+                        jumlah,
+                        barang (
+                            jenis_barang,
+                            harga
+                        )
+                    `)
+                    .eq('id_transaksi', id);
 
-        if (error) {
-            console.error('Error fetching transaction details:', error);
-            res.status(500).json({ message: 'Internal Server Error', error });
-        } else {
-            console.log("Transaction details data:", data); // Debugging line
-            res.json(data);
+                if (error) {
+                    console.error('Error fetching transaction details:', error);
+                    res.status(500).json({ message: 'Internal Server Error', error });
+                } else {
+                    console.log("Transaction details data:", data); // Debugging line
+                    res.json(data);
+                }
+            } catch (error) {
+                console.error('Server error:', error);
+                res.status(500).json({ message: 'Internal Server Error', error });
+            }
         }
-    } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ message: 'Internal Server Error', error });
+        else {
+            res.render('unauthorized', {
+                layout: 'layouts/layout',
+                title:'401 Unauthorized',
+                messages: 'Silakan <a href="/">login</a> sebagai Admin terlebih dahulu.'
+            });
+        }
+    }
+    else {
+        res.render('unauthorized', {
+            layout: 'layouts/layout',
+            title:'401 Unauthorized',
+            messages: 'Silakan <a href="/">login</a> sebagai Admin terlebih dahulu.'
+        });
     }
 });
-
-
-
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);

@@ -4,42 +4,57 @@
 
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA;">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0" style="background-color:#B0D8DA; width:250px; position:fixed;">
             <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
                 <a href="/home" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none">
                     <span class="fs-5 d-none d-sm-inline" style="color:#00304C;"><h2><img src="/image/efullpay_logo.png" style="width:100px; height:100px; margin:0!; padding:0!;">EFullPay</h2></span>
                 </a>
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin') { %>
+                        <li class="nav-item">
+                            <a href="/account-management" class="nav-link align-middle px-0">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Account Manager Logo.png" style="width:35px; height:27px; margin:10px; padding:0!;">Account Manager</span>
+                            </a>
+                        </li>
+                    <% } %>
                     <li>
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration: underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
+                        <a href="/inventory" class="nav-link align-middle px-0">
+                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;  text-decoration:underline;"><img src="/image/Inventory Logo.png" style="width:35px; height:28px; margin:10px; padding:0!;">Inventory</span> 
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                            </i> <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
-                        </a>
-                    </li>
+                    <% if (user.role == 'Admin' || user.role == 'Kasir') { %>
+                        <li>
+                            <a href="/transaction" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Transaction Logo.png" style="width:32px; height:28px; margin:10px; padding:0!;">Transaction</span>
+                            </a>
+                        </li>
+                    <% } %>
+                    <% if (user.role == 'Admin') { %>
+                        <li>
+                            <a href="/recapitulation" class="nav-link px-0 align-middle">
+                                <span class="ms-1 d-none d-sm-inline" style="color:#00304C;"><img src="/image/Recapitulation Logo.png" style="width:35px; height:31px; margin:10px; padding:0!;">Recapitulation</span>
+                            </a>
+                        </li>
+                    <% } %> 
                 </ul>
                 <hr>
+                <div class="dropdown pb-4" style="left:0%">
+                    <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/image/profile.png" alt="profile-icon" width="30" height="30" class="rounded-circle">
+                        <span class="d-none d-sm-inline mx-1" style="color:#00304C;"><%= user.nama %></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <li><a class="dropdown-item" href="/signout">Sign out</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="col py-3">
+        <div class="col py-3" style="margin-left: 250px;">
             <div class="mt-4 sub-text">
                     <div class="d-flex justify-content-between">
                         <h3>Inventory List</h3>
                         <div class="d-flex justify-content-end align-items-center gap-3 my-2">
-                            <button onclick="openPopup()" style="border: none; padding: 0; background: none;">
+                            <button onclick="openPopup(null)" style="border: none; padding: 0; background: none;">
                                 <img src="/image/plus.png" alt="person icon" style="width: 30px; height: 30px;" >
                             </button>
                             <form method="POST" action="">
@@ -71,19 +86,21 @@
                                 <td><%= barang.jenis_barang %></td>
                                 <td><%= barang.stock %></td>
                                 <td><%= barang.harga %></td>
-                                <td style="width:400px;">
-                                    <span class="d-flex align-items-center gap-3 mx-5">
-                                        <form method="POST" action="/remove-from-inventory">
-                                            <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
-                                            <button type="submit" style="border: none; padding: 0; background: none;">
-                                                <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
-                                            </button>
-                                        </form>
-                                        <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
-                                    </div>  
-                                      <button class="btn" type="submit" onclick="openPopup('<%= JSON.stringify(barang) %>')">Edit</button>
-                                    </span>
-                                </td>
+                                <% if (user.role == 'KaryawanGudang' || user.role =='Admin') { %>
+                                    <td style="width:400px;">
+                                        <span class="d-flex align-items-center gap-3 mx-5">
+                                            <form method="POST" action="/remove-from-inventory">
+                                                <input type="hidden" value="<%= barang.id_barang%>" id="id_barang" name="id_barang">
+                                                <button type="submit" style="border: none; padding: 0; background: none;">
+                                                    <img src="/image/delete.png" alt="person icon" style="width: 30px; height: 30px;">
+                                                </button>
+                                            </form>
+                                            <button class="details-btn" onclick="openDetailsPopup('<%= barang.id_barang %>')">Details</button>
+                                        </div>  
+                                          <button class="btn" type="submit" onclick="openPopup('<%= JSON.stringify(barang) %>')">Edit</button>
+                                        </span>
+                                    </td>
+                                <% } %>
                             </tr>
                         <% }) %>
                        
@@ -108,29 +125,43 @@
             <button type="submit" style="border: none; padding: 0; background: none;" onclick="closePopup()">
                 <img src="/image/wrong.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
-            <button type="submit" style="border: none; padding: 0; background: none;" onclick="openPopupAlert()">
+            <button type="submit" style="border: none; padding: 0; background: none;" onclick="confirmAndSubmit()">
                 <img src="/image/correct.png" alt="person icon" style="width: 30px; height: 30px;">
             </button>
         </div>
     </div>
     <div class="p-3">
-        <form method="POST" action="/edit-from-inventory" enctype="multipart/form-data">
+        <form method="POST" action="/edit-from-inventory" enctype="multipart/form-data" onsubmit="return validateAndSubmitForm()">
             <input type="hidden" id="id_barang_edit" name="id_barang">
             <div class="py-2">
                 <h6>Jenis Barang</h6>
                 <input type="text" id="jenis_barang_edit" name="jenis_barang" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+                <p id="jenisBarangError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Stock</h6>
                 <input type="number" id="stock_edit" name="stock" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="stockError" class="error"></p>
             </div>
             <div class="py-2">
                 <h6>Harga</h6>
                 <input type="number" id="harga_edit" name="harga" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded" required>
+                <p id="hargaError" class="error"></p>
             </div>
-            <input type="file" name="image" id="image">
-            <button type="submit" id="submitButton" style="display: none;">Submit</button>
+            <div class="py-2" id="deskripsiEdit-div">
+                <h6>Deskripsi</h6>
+                <input type="text" id="deskripsi_edit" name="deskripsi" style="text-align:center; outline: none !important; background-color: #ededed;" class="border-0 rounded">
+                <p id="deskripsiError" class="error"></p>
+            </div>
+            <div class="py-2" id="imageEdit-div">
+                <h6>Image</h6>
+                <input type="file" name="image" id="image_edit" required>
+                <p id="imageError" class="error"></p>
+            </div>
+            
+            <button type="submit" id="submitButton" style="display:none;">Submit</button>
         </form>
+        
     </div>
 </div>
 
@@ -174,6 +205,90 @@
     </div>
 </div>
 
+<script>
+    function confirmAndSubmit() {
+        if (validateForm()) {
+            // Display a confirmation dialog
+            openPopupAlert();          
+        }
+    }
+    
+    function validateForm() {
+        // Reset error messages
+        document.getElementById('jenisBarangError').textContent = '';
+        document.getElementById('stockError').textContent = '';
+        document.getElementById('hargaError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('deskripsiError').textContent = '';
+
+    
+        // Get form values
+        const id_barang =  document.getElementById('id_barang_edit').value;
+        const jenis_barang = document.getElementById('jenis_barang_edit').value;
+        var stock = document.getElementById('stock_edit').value;
+        var harga = document.getElementById('harga_edit').value;
+        var image = document.getElementById('image_edit').value;
+        var deskripsi = document.getElementById('deskripsi_edit').value;
+
+
+         // Simple validation example for jenis_barang
+        if (jenis_barang==='') {
+            document.getElementById('jenisBarangError').textContent = 'Jenis barang is required';
+        }
+        if(id_barang==='' && datas.some(item => item.jenis_barang === jenis_barang)){
+            document.getElementById('jenisBarangError').textContent = 'Jenis Barang must be unique';
+        }
+        else if(datas.some(item => item.jenis_barang === jenis_barang) && datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
+            document.getElementById('jenisBarangError').textContent = 'Jenis Barang must be unique';
+        }
+
+        // Simple validation example for stock (numeric and positive)
+        if (isNaN(stock) || stock <= 0) {
+            document.getElementById('stockError').textContent = 'Stock must be a positive number';
+        }
+    
+        // Simple validation example for harga (numeric and positive)
+        if (isNaN(harga) || harga <= 0) {
+            document.getElementById('hargaError').textContent = 'Harga must be a positive number';
+        }
+
+        if (deskripsi==='') {
+            document.getElementById('deskripsiError').textContent = 'Deskripsi is required';
+        }
+    
+        // Validate that the image input is not empty
+        if (image.trim() === '' && !id_barang) {
+            document.getElementById('imageError').textContent = 'Image is required';
+        }
+    
+        var deskripsiInput = document.getElementById('deskripsi_edit');
+        var deskripsi = deskripsiInput.value;
+
+        if (deskripsiInput.disabled) {
+            // If any validation fails, prevent form submission
+            if (document.getElementById('jenisBarangError').textContent||document.getElementById('stockError').textContent || document.getElementById('hargaError').textContent) {
+                return false;
+            }  
+        }
+        else{
+            // If any validation fails, prevent form submission
+            if (document.getElementById('deskripsiError').textContent||document.getElementById('jenisBarangError').textContent||document.getElementById('stockError').textContent || document.getElementById('hargaError').textContent || document.getElementById('imageError').textContent) {
+                return false;
+            }   
+        }
+        
+    
+        // If all validations pass
+        return true;
+    }
+
+    function submitForm() {
+        document.getElementById('submitButton').click();
+        document.getElementById('popupAlert').style.display = 'none';
+    }
+</script>
+    
+
 
 <script>
     function openPopup(barangData) {
@@ -181,14 +296,35 @@
         document.getElementById('popup').style.display = 'block';
         const popupHeader = document.getElementById('popup-header');
         const barang = JSON.parse(barangData)
-        console.log(barang.id_barang)
-        if(barang.id_barang !== undefined){
+
+        document.getElementById('jenisBarangError').textContent = '';
+        document.getElementById('stockError').textContent = '';
+        document.getElementById('hargaError').textContent = '';
+        document.getElementById('imageError').textContent = '';
+        document.getElementById('deskripsiError').textContent = '';
+        if(barangData !== null){
             document.getElementById('id_barang_edit').value = barang.id_barang;
             document.getElementById('jenis_barang_edit').value = barang.jenis_barang;
             document.getElementById('stock_edit').value = barang.stock;
             document.getElementById('harga_edit').value = barang.harga;
+
+            document.getElementById('image_edit').disabled = true;
+            document.getElementById('imageEdit-div').style.display = 'none';
+
+            document.getElementById('deskripsi_edit').disabled = true;
+            document.getElementById('deskripsiEdit-div').style.display = 'none';
         }
         else{
+            document.getElementById('jenis_barang_edit').value = ''
+            document.getElementById('stock_edit').value ='';
+            document.getElementById('harga_edit').value = '';
+
+            document.getElementById('image_edit').disabled = false;
+            document.getElementById('imageEdit-div').style.display = 'block';
+
+            document.getElementById('deskripsi_edit').disabled = false;
+            document.getElementById('deskripsiEdit-div').style.display = 'block';
+
             popupHeader.textContent = 'Add Barang';
         }
 
@@ -215,23 +351,6 @@
     function closePopupUnique(){
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('popupUnique').style.display = 'none';
-    }
-
-    function submitForm() {
-        const jenis_barang = document.getElementById('jenis_barang_edit').value;
-        const id_barang =  document.getElementById('id_barang_edit').value;
-        console.log(datas.filter(item => item.id_barang === id_barang))
-
-        console.log(jenis_barang)
-        if(datas.some(item => item.jenis_barang === jenis_barang)&& datas.filter(item => item.id_barang === id_barang)[0].jenis_barang!=jenis_barang){
-            document.getElementById('popupAlert').style.display = 'none';
-            document.getElementById('popupUnique').style.display = 'block';
-        }
-        else{
-            document.getElementById('submitButton').click();
-            document.getElementById('popupAlert').style.display = 'none';
-        }
-    
     }
 
 </script>
@@ -370,6 +489,9 @@
     .btn:hover{
         background-color: #00506B; 
         color: white
+    }
+    .error {
+        color: red;
     }
 
 </style>
