@@ -1,20 +1,16 @@
 // server/app.js
 const { createClient } = require('@supabase/supabase-js');
-const morgan = require('morgan');
 const bodyparser = require("body-parser");
-
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const flash = require('connect-flash');
-const axios = require("axios");
 const randomstring = require("randomstring");
 const generateUniqueID = require('../utility/utility'); 
 const bcrypt = require('bcrypt');
 
 //file upload
 const multer = require("multer");
-const path = require('path');
 const storage = multer.diskStorage({
     destination: (req,file,cb) => {
         cb(null,'./public/image')
