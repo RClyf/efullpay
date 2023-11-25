@@ -1,92 +1,123 @@
-# EFullPay
+# Point of Sale (POS) System Documentation
 
+## Overview
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.informatika.org/k2_g2/efullpay.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.informatika.org/k2_g2/efullpay/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+This repository contains a simple Point of Sale (POS) system implemented using Node.js and Supabase as the backend database. The system includes features for user authentication, account management, inventory management, transaction processing, and recapitulation of sales.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://gitlab.informatika.org/k2_g2/efullpay.git
+    ```
+
+2. **Navigate to the project directory:**
+
+    ```bash
+    cd efullpay
+    ```
+
+3. **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+4. **Set up Supabase:**
+
+   - Create an account on [Supabase](https://supabase.io/).
+   - Create a new project and obtain the API URL and API Key.
+   - Replace the `supabaseUrl` and `supabaseKey` variables in `app.js` with your Supabase project details.
+
+5. **Run the application:**
+
+    ```bash
+    npm start
+    ```
+
+   The server will be accessible at `http://localhost:8080` by default.
+
+## Features
+
+### 1. User Authentication
+
+- Users can log in using their username and password.
+- Passwords are securely hashed using bcrypt for storage in the database.
+
+### 2. Account Management
+
+- Admin users can view and manage user accounts.
+- Functionality includes adding, editing, and removing user accounts.
+
+### 3. Inventory Management
+
+- Admin users can manage the inventory of products.
+- Functionality includes adding, editing, and removing products from the inventory.
+- File upload for product images is implemented using multer.
+
+### 4. Transaction Processing
+
+- Admin and cashier users can process transactions.
+- Users can add products to a shopping cart, edit quantities, and remove items.
+- The system calculates the total price of the transaction.
+
+### 5. Recapitulation
+
+- Admin users can view a recapitulation of all transactions.
+- The recapitulation includes details such as transaction ID, date, and total sales.
+
+## File Structure
+
+- **server/app.js**: Main server file containing the Express application.
+- **utility/utility.js**: Utility function for generating unique IDs.
+- **views/**: Folder containing EJS templates for different pages.
+
+## Dependencies
+
+- `@supabase/supabase-js`: Supabase JavaScript client.
+- `axios`: HTTP client for making requests.
+- `bcrypt`: Library for hashing passwords securely.
+- `body-parser`: Middleware for handling HTTP POST requests.
+- `connect-flash`: Middleware for displaying flash messages.
+- `ejs`: Templating engine for rendering HTML.
+- `express`: Web application framework for Node.js.
+- `express-ejs-layouts`: Layout support for EJS templates.
+- `express-session`: Middleware for managing user sessions.
+- `morgan`: HTTP request logger middleware.
+- `multer`: Middleware for handling file uploads.
+- `randomstring`: Library for generating random strings.
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+1. **Login**: Access the system by visiting `http://localhost:8080/`. Log in with valid credentials.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+2. **Home Page**: After logging in, users are redirected to the home page (`/home`).
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+3. **Navigation**: Use the navigation links to access different sections of the POS system.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+4. **Account Management**: Admin users can manage accounts, including adding, editing, and removing user accounts.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+5. **Inventory Management**: Admin users can manage the inventory, including adding, editing, and removing products.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+6. **Transaction Processing**: Admin and cashier users can process transactions. Add products to the cart, edit quantities, and complete transactions.
 
-## License
-For open source projects, say how it is licensed.
+7. **Recapitulation**: Admin users can view a recapitulation of all transactions.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Additional Notes
+
+- This system uses Supabase as the backend, and you need to set up a Supabase project for database functionality.
+
+- Ensure that the required dependencies are installed using `npm install` before running the application.
+
+- The file upload functionality is set to save images in the `public/image` directory.
+
+- Customize the Supabase connection details, session secret, and other configurations in the `app.js` file.
+
+## Future Improvements
+
+- Implement user roles and permissions for more fine-grained access control.
+- Enhance the user interface for a more intuitive user experience.
+- Implement validation for user inputs to improve data integrity.
+
+Feel free to contribute to this project and make it even better!
