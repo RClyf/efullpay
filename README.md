@@ -69,6 +69,9 @@ This repository contains a simple Point of Sale (POS) system implemented using N
 
 ## File Structure
 
+- **node_modules/** : Containing nodejs modules.
+- **public/css/style.css** : Containing css file for styling.
+- **public/image/** : Containing image files.
 - **server/app.js**: Main server file containing the Express application.
 - **utility/utility.js**: Utility function for generating unique IDs.
 - **views/**: Folder containing EJS templates for different pages.
@@ -103,6 +106,133 @@ This repository contains a simple Point of Sale (POS) system implemented using N
 6. **Transaction Processing**: Admin and cashier users can process transactions. Add products to the cart, edit quantities, and complete transactions.
 
 7. **Recapitulation**: Admin users can view a recapitulation of all transactions.
+
+## API Endpoints
+
+### Authentication
+
+- **Endpoint**: `/login`
+  - **Method**: `POST`
+  - **Description**: Authenticate user based on provided username and password.
+  - **Request Body**:
+    - `username` (string): User's username
+    - `password` (string): User's password
+  - **Response**:
+    - Successful login redirects to the home page.
+    - Invalid credentials redirect to the login page with an error message.
+
+- **Endpoint**: `/signout`
+  - **Method**: `GET`
+  - **Description**: Log out the user and destroy the session.
+  - **Response**: Redirects to the login page.
+
+### Account Management
+
+- **Endpoint**: `/account-management`
+  - **Method**: `GET`
+  - **Description**: Retrieve and display user accounts for admin users.
+  - **Response**: Renders the account management page.
+
+- **Endpoint**: `/remove-from-account`
+  - **Method**: `POST`
+  - **Description**: Remove a user account based on the provided user ID.
+  - **Request Body**:
+    - `id_pengguna` (string): User ID to be removed.
+  - **Response**: Redirects to the account management page after removal.
+
+- **Endpoint**: `/edit-from-account-management`
+  - **Method**: `POST`
+  - **Description**: Add or edit a user account.
+  - **Request Body**:
+    - `id_pengguna` (string): User ID (leave empty for new user).
+    - `username` (string): User's username.
+    - `password` (string): User's password.
+    - `nama` (string): User's name.
+    - `email` (string): User's email.
+    - `role` (string): User's role (e.g., Admin, Cashier).
+  - **Response**: Redirects to the account management page after the operation.
+
+### Inventory Management
+
+- **Endpoint**: `/inventory`
+  - **Method**: `GET`
+  - **Description**: Retrieve and display product inventory.
+  - **Response**: Renders the inventory management page.
+
+- **Endpoint**: `/remove-from-inventory`
+  - **Method**: `POST`
+  - **Description**: Remove a product from the inventory based on the provided product ID.
+  - **Request Body**:
+    - `id_barang` (string): Product ID to be removed.
+  - **Response**: Redirects to the inventory management page after removal.
+
+- **Endpoint**: `/edit-from-inventory`
+  - **Method**: `POST`
+  - **Description**: Add or edit a product in the inventory.
+  - **Request Body**:
+    - `id_barang` (string): Product ID (leave empty for new product).
+    - `jenis_barang` (string): Product type.
+    - `stock` (integer): Product stock quantity.
+    - `harga` (integer): Product price.
+    - `deskripsi` (string): Product description.
+    - `image` (file): Product image.
+  - **Response**: Redirects to the inventory management page after the operation.
+
+### Transaction Processing
+
+- **Endpoint**: `/transaction`
+  - **Method**: `GET`
+  - **Description**: Process transactions, add products to the cart, and calculate total prices.
+  - **Response**: Renders the transaction processing page.
+
+- **Endpoint**: `/add-to-cart`
+  - **Method**: `POST`
+  - **Description**: Add a product to the shopping cart.
+  - **Request Body**:
+    - `id_barang` (string): Product ID.
+    - `jenis_barang` (string): Product type.
+    - `harga` (integer): Product price.
+    - `jumlah` (integer): Quantity of the product.
+  - **Response**: Redirects to the transaction processing page after adding to the cart.
+
+- **Endpoint**: `/edit-jumlah`
+  - **Method**: `POST`
+  - **Description**: Edit the quantity of a product in the cart.
+  - **Request Body**:
+    - `id_barang` (string): Product ID.
+    - `jumlah` (integer): New quantity of the product.
+  - **Response**: Redirects to the transaction processing page after editing the quantity.
+
+- **Endpoint**: `/remove-from-cart`
+  - **Method**: `POST`
+  - **Description**: Remove a product from the cart.
+  - **Request Body**:
+    - `id_barang` (string): Product ID.
+  - **Response**: Redirects to the transaction processing page after removal.
+
+- **Endpoint**: `/reset-cart`
+  - **Method**: `POST`
+  - **Description**: Reset the shopping cart.
+  - **Response**: Redirects to the transaction processing page after resetting the cart.
+
+- **Endpoint**: `/pay`
+  - **Method**: `POST`
+  - **Description**: Finalize the transaction, update the database, and reset the cart.
+  - **Request Body**:
+    - `jenisPembayaran` (string): Payment method (e.g., Cash, Credit Card).
+  - **Response**: Redirects to the transaction processing page after completing the transaction.
+
+### Recapitulation
+
+- **Endpoint**: `/recapitulation`
+  - **Method**: `GET`
+  - **Description**: View a recapitulation of all transactions for admin users.
+  - **Response**: Renders the recapitulation page.
+
+- **Endpoint**: `/transaction-details/:id`
+  - **Method**: `GET`
+  - **Description**: View details of a specific transaction for admin users.
+  - **Response**: Returns JSON data with transaction details, including product details.
 
 ## Additional Notes
 
