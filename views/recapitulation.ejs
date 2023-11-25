@@ -50,10 +50,25 @@
             </div>
         </div>
         
-        <!-- Main content -->
+        <!-- Main content -->  
         <div class="col py-3" style="margin-left: 250px;">
-            <div class="mt-4 sub-text">
+            <div class="mt-4 sub-text">      
                 <h3>Recapitulation</h3>
+                 <!-- Filter Section -->
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="endDate" class="form-label">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+
+            <button class="btn details-btn" onclick="filterTransactions()">Filter</button>
+
+            <!-- End Filter Section -->
+
                 <table class="table table-bordered table-striped table-hover">
                     <thead style="background-color:#B0D8DA;">
                         <tr>
@@ -106,6 +121,76 @@
 </div>
 
 <script>
+    displayTotalAmountSum(transactions);
+    
+    function displayTotalAmountSum(transactions) {
+        // Calculate and display the sum of the total amount for all transactions
+        var totalAmountSum = transactions.reduce((total, transaction) => total + transaction.total, 0);
+    
+        var tableBody = document.querySelector('tbody');
+    
+        // Add a new row at the bottom of the table displaying the sum
+        var sumRow = `<tr style="background-color:#B0D8DA; font-weight:bolder;">
+            <td colspan="3">Sum of Total Amount</td>
+            <td>Rp ${totalAmountSum.toLocaleString('id-ID')}</td>
+        </tr>`;
+    
+        tableBody.innerHTML += sumRow;
+    }
+    
+    function filterTransactions() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        // You can perform additional validation on startDate and endDate if needed
+
+        // Filter transactions based on date range
+        var filteredTransactions = transactions.filter(function (transaction) {
+            return transaction.tanggal_transaksi >= startDate && transaction.tanggal_transaksi <= endDate;
+        });
+
+        // Update the table with filtered transactions
+        updateTable(filteredTransactions);
+    }
+
+    function updateTable(filteredTransactions) {
+        // Update the table content with filtered transactions
+        var tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = ''; // Clear existing content
+    
+        // Add rows for filtered transactions
+        filteredTransactions.forEach(function (transaction) {
+            var row = `<tr>
+                <td>${transaction.id_transaksi}</td>
+                <td>${transaction.tanggal_transaksi}</td> 
+                <td>${transaction.jenis_pembayaran}</td> 
+                <td>Rp ${transaction.total.toLocaleString('id-ID')}</td>
+                <td>
+                    <div class="d-flex">
+                        <button class="btn details-btn" onclick="openDetailsPopup('${transaction.id_transaksi}')">Details</button>
+                        
+                        <form method="POST" action="/remove-from-transaksi" style="margin-left: 10px;">
+                            <input type="hidden" value="${transaction.id_transaksi}" id="id_transaksi" name="id_transaksi">
+                            <button type="submit" class="delete-button"></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>`;
+    
+            tableBody.innerHTML += row;
+        });
+    
+        // Calculate and display the sum of the total amount
+        var totalAmount = filteredTransactions.reduce((total, transaction) => total + transaction.total, 0);
+        var sumRow = `<tr style="background-color:#B0D8DA; font-weight:bolder;">
+            <td colspan="3">Sum of Total Amount</td>
+            <td>Rp ${totalAmount.toLocaleString('id-ID')}</td>
+        </tr>`;
+    
+        tableBody.innerHTML += sumRow;
+    }
+    
+
     // Function to open the details popup and fetch transaction details
     function openDetailsPopup(id_transaksi) {
         // Show the overlay
@@ -147,13 +232,9 @@
             })
             .catch(error => {
                 console.error('Error fetching transaction details:', error);
-            });
+            });  
     }
     
-    
-    
-    
-
 
 
     // Function to close the details popup
