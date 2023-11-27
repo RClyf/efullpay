@@ -94,7 +94,7 @@
                                     <form method="POST" action="/remove-from-transaksi" style="margin-left: 10px;"> <!-- Adjust margin as needed -->
                                         <input type="hidden" value="<%= transaction.id_transaksi %>" id="id_transaksi" name="id_transaksi">
                                         <button type="submit" class="delete-button">
-                                            <!-- Use CSS to set the image as a background and center it -->
+                         
                                         </button>
                                     </form>
                                 </div>
@@ -117,22 +117,22 @@
 
 <!-- Details popup container -->
 <div class="popup-container" id="detailsPopup" style="display: none;">
-    <!-- Content for details popup will be dynamically inserted here -->
+
 </div>
 
 <script>
     displayTotalAmountSum(transactions);
     
     function displayTotalAmountSum(transactions) {
-        // Calculate and display the sum of the total amount for all transactions
+    
         var totalAmountSum = transactions.reduce((total, transaction) => total + transaction.total, 0);
     
         var tableBody = document.querySelector('tbody');
     
-        // Add a new row at the bottom of the table displaying the sum
+
         var sumRow = `<tr style="background-color:#B0D8DA; font-weight:bolder;">
             <td colspan="3">Sum of Total Amount</td>
-            <td>Rp ${totalAmountSum.toLocaleString('id-ID')}</td>
+            <td colspan= "2">Rp ${totalAmountSum.toLocaleString('id-ID')}</td>
         </tr>`;
     
         tableBody.innerHTML += sumRow;
@@ -142,23 +142,20 @@
         var startDate = document.getElementById('startDate').value;
         var endDate = document.getElementById('endDate').value;
 
-        // You can perform additional validation on startDate and endDate if needed
-
-        // Filter transactions based on date range
         var filteredTransactions = transactions.filter(function (transaction) {
             return transaction.tanggal_transaksi >= startDate && transaction.tanggal_transaksi <= endDate;
         });
 
-        // Update the table with filtered transactions
+  
         updateTable(filteredTransactions);
     }
 
     function updateTable(filteredTransactions) {
-        // Update the table content with filtered transactions
+  
         var tableBody = document.querySelector('tbody');
-        tableBody.innerHTML = ''; // Clear existing content
+        tableBody.innerHTML = ''; 
     
-        // Add rows for filtered transactions
+
         filteredTransactions.forEach(function (transaction) {
             var row = `<tr>
                 <td>${transaction.id_transaksi}</td>
@@ -193,14 +190,14 @@
 
     // Function to open the details popup and fetch transaction details
     function openDetailsPopup(id_transaksi) {
-        // Show the overlay
+ 
         document.getElementById('overlay').style.display = 'block';
     
-        // Fetch the transaction details
+
         fetch(`/transaction-details/${id_transaksi}`)
             .then(response => response.json())
             .then(details => {
-                // Build the table with the details received
+        
                 let tableHTML = '<h2 style="background-color:#B0D8DA; padding:10px;">Transaction Detail</h2>';
                 tableHTML += '<table class="table table-bordered table-striped table-hover" style="padding:20px;">';
                 tableHTML += '<thead style="background-color:#B0D8DA;">';
@@ -226,7 +223,7 @@
                 tableHTML += '</tbody>';
                 tableHTML += '</table>';
     
-                // Insert the table into the popup's innerHTML
+            
                 document.getElementById('detailsPopup').innerHTML = tableHTML;
                 document.getElementById('detailsPopup').style.display = 'block';
             })
