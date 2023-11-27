@@ -533,6 +533,13 @@ app.get('/transaction-details/:id', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
+// app.listen(PORT, () => {
+//     console.log(`Server listening on ${PORT}`);
+// });
+
+
+const server = app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
+
+module.exports = server; 
